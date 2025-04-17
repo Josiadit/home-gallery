@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug Secrets
+        run: |
+          echo "DOCKER_USERNAME is set: ${{ secrets.DOCKER_USERNAME != '' }}"
+          echo "DOCKER_TOKEN is set: ${{ secrets.DOCKER_TOKEN != '' }}"
+
       - name: Prepare
         id: prepare
         run: |
