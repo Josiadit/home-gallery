@@ -48,20 +48,20 @@ export const Years = () => {
   return (
     <>
       <NavBar disableEdit={true} />
-      <h2 className="m-4 text-xl text-gray-400">Years</h2>
+      <h2 className="m-4 text-xl text-light-700 font-bold font-serif">Years</h2>
       <ul className="m-4">
         {yearInfos.map(({year, count, images, videos}) => {
-          return <li className="flex gap-2 border border-collapse border-gray-800" key={year}>
-            <Link to={`/years/${year}`} className="p-4 text-gray-500 hover:text-gray-300 hover:bg-gray-700">{year} - {count} media</Link>
+          return <li className="flex gap-2 border border-collapse border-light-700" key={year}>
+            <Link to={`/years/${year}`} className="p-4 text-light-700 hover:text-light-50 hover:bg-light-600">{year} - {count} media</Link>
             { images > 0 &&
-              <a className="inline-flex items-center justify-center gap-2 p-4 text-gray-500 hover:text-gray-300 hover:bg-gray-700 hover:cursor-pointer"
+              <a className="inline-flex items-center justify-center gap-2 p-4 text-light-700 hover:text-light-50 hover:bg-light-600 hover:cursor-pointer"
                  onClick={() => navigate(`/years/${year}?q=type:image`)}>
                 <FontAwesomeIcon icon={icons.faImage} />
                 <span>{images} <span className="max-sm:hidden">images</span></span>
               </a>
             }
             { videos > 0 &&
-              <a className="inline-flex items-center justify-center gap-2 p-4 text-gray-500 hover:text-gray-300 hover:bg-gray-700 hover:cursor-pointer"
+              <a className="inline-flex items-center justify-center gap-2 p-4 text-light-700 hover:text-light-50 hover:bg-light-600 hover:cursor-pointer"
                  onClick={() => navigate(`/years/${year}?q=type:video`)}>
                 <FontAwesomeIcon icon={icons.faPlay} />
                 <span>{videos} <span className="max-sm:hidden">videos</span></span>

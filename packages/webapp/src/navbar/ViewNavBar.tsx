@@ -39,7 +39,7 @@ export const ViewNavBar = ({disableEdit}) => {
       icon: icons.faPlay,
       text: 'Videos',
       action: () => navigate('/search/type:video'),
-      disabled: false,
+      disabled: true,
     },
     {
       icon: icons.faPen,
@@ -55,21 +55,28 @@ export const ViewNavBar = ({disableEdit}) => {
     {
       icon: icons.faTags,
       text: 'Tags',
-      action: () => navigate('/tags'),
-      disabled: false,
+      action: () => {
+        if (disableEdit || appConfig.disabledEdit) {
+          return
+        }
+        navigate('/tags')
+      },
+      disabled: disableEdit || appConfig.disabledEdit,
     },
     {
       icon: icons.faMap,
       text: 'Map',
       action: () => navigate('/map', {state: {listLocation}}),
-      disabled: false,
+      disabled: true,
     },
   ]
 
   return (
     <>
-      {items.map((item, key) => (
-        <NavItem key={key} onClick={item.action} icon={item.icon} text={item.text} disabled={item.disabled} />
+      {items
+          .filter(item => !item.disabled)
+          .map((item, key) => (
+        <NavItem key={key} onClick={item.action} icon={item.icon} text={item.text} disabled={item.disabled}/>
       ))}
     </>
   )

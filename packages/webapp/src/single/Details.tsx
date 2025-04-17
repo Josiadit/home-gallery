@@ -37,7 +37,7 @@ export const Details = ({entry, dispatch}) => {
   }
 
   const searchLink = (text, query) => {
-    return <a className="text-gray-300 break-all rounded hover:cursor-pointer hover:bg-gray-600 hover:text-gray-200" key={query} onClick={() => dispatchSearch(query)} title={`Search for '${query}'`}>{text}</a>
+    return <a className="text-light-700 break-all rounded hover:cursor-pointer hover:bg-light-500 hover:text-light-50" key={query} onClick={() => dispatchSearch(query)} title={`Search for '${query}'`}>{text}</a>
   }
 
   const simpleSearchLink = (text, key?, value?) => {
@@ -98,7 +98,7 @@ export const Details = ({entry, dispatch}) => {
     }
 
     return (
-      <a key={`${entry.shortId}-geo`} className="text-gray-300 break-all rounded hover:cursor-pointer hover:bg-gray-600 hover:text-gray-200" onClick={() => dispatch({type: 'map'})}>
+      <a key={`${entry.shortId}-geo`} className="text-light-600 break-all rounded hover:cursor-pointer hover:bg-light-500 hover:text-light-50" onClick={() => dispatch({type: 'map'})}>
         {latitude.toFixed(4)},{longitude.toFixed(4)} (open map)
       </a>
     )
@@ -130,17 +130,17 @@ export const Details = ({entry, dispatch}) => {
     <>
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl text-gray-300">Media Details</h3>
-          <a className="flex items-center justify-center w-6 h-6 rounded hover:bg-gray-700 hover:cursor-pointer"
+          <h3 className="text-xl text-light-700 font-serif font-bold">Media Details</h3>
+          <a className="flex items-center justify-center w-6 h-6 rounded hover:bg-light-500 hover:cursor-pointer"
             onClick={() => dispatch({type: 'toggleDetails'})}
             title="Close media details">
-            <FontAwesomeIcon icon={icons.faXmark} className="text-gray-700 hover:text-gray-400 active:text-gray-200"/>
+            <FontAwesomeIcon icon={icons.faXmark} className="text-light-700 hover:text-light-50 active:text-light-400"/>
           </a>
         </div>
-        <div className="flex flex-col gap-6 text-gray-500">
+        <div className="flex flex-col gap-6 text-light-500">
           <div className="flex">
             <div className="w-8">
-              <FontAwesomeIcon icon={icons.faIdCard} className="text-gray-300"/>
+              <FontAwesomeIcon icon={icons.faIdCard} className="text-light-500"/>
             </div>
             <div>
               <p>{mainFilename}</p>
@@ -152,7 +152,7 @@ export const Details = ({entry, dispatch}) => {
           </div>
           <div className="flex">
             <div className="w-8">
-              <FontAwesomeIcon icon={icons.faCalendar} className="text-gray-300"/>
+              <FontAwesomeIcon icon={icons.faCalendar} className="text-light-500"/>
             </div>
             <div>
               <p>
@@ -169,7 +169,7 @@ export const Details = ({entry, dispatch}) => {
           </div>
           <div className="flex">
             <div className="flex-shrink-0 w-8">
-              <FontAwesomeIcon icon={icons.faFolder} className="text-gray-300"/>
+              <FontAwesomeIcon icon={icons.faFolder} className="text-light-500"/>
             </div>
             <div>
               {entry.files.map(mapFile).map(l => (
@@ -182,7 +182,7 @@ export const Details = ({entry, dispatch}) => {
           { (hasAddress(entry) || hasGeo(entry)) && (
             <div className="flex">
               <div className="flex-shrink-0 w-8">
-                <FontAwesomeIcon icon={icons.faMapPin} className="text-gray-300"/>
+                <FontAwesomeIcon icon={icons.faMapPin} className="text-light-500"/>
               </div>
               <div>
                 {entry.road && (
@@ -204,7 +204,7 @@ export const Details = ({entry, dispatch}) => {
             <>
               <div className="flex">
                 <div className="flex-shrink-0 w-8">
-                  <FontAwesomeIcon icon={icons.faNewspaper} className="text-gray-300"/>
+                  <FontAwesomeIcon icon={icons.faNewspaper} className="text-light-500"/>
                 </div>
                 <div>
                   <p className="inline-flex flex-wrap gap-2">{entry.description}</p>
@@ -214,7 +214,7 @@ export const Details = ({entry, dispatch}) => {
           )}
           <div className="flex">
             <div className="flex-shrink-0 w-8">
-              <FontAwesomeIcon icon={icons.faTags} className="text-gray-300"/>
+              <FontAwesomeIcon icon={icons.faTags} className="text-light-500"/>
             </div>
             <div>
               <p className="inline-flex flex-wrap gap-2">
@@ -222,8 +222,8 @@ export const Details = ({entry, dispatch}) => {
                   <a className="px-2 py-1 text-gray-300 bg-gray-800 rounded hover:bg-gray-700 hover:text-gray-200 hover:cursor-pointer" onClick={() => dispatchSearch(`${queryTerm("tag", tag)}`)} title={`Search for tag ${tag}`}>{tag}</a>
                 ))}
                 {!appConfig.disabledEdit && (
-                  <a className="flex items-center gap-2 px-2 py-1 text-gray-500 bg-transparent border border-gray-700 rounded group inset-1 hover:bg-gray-700 hover:text-gray-200 hover:cursor-pointer active:bg-gray-600" onClick={editTags} title={`Edit single tags`}>
-                    <FontAwesomeIcon icon={icons.faPen} className="text-gray-500 group-hover:text-gray-300"/>
+                  <a className="flex items-center gap-2 px-2 py-1 text-light-700 bg-transparent border border-light-700 rounded group inset-1 hover:bg-light-700 hover:text-light-50 hover:cursor-pointer active:bg-light-500" onClick={editTags} title={`Edit single tags`}>
+                    <FontAwesomeIcon icon={icons.faPen} className="text-light-600 group-hover:text-light-50"/>
                     <span>Edit tags</span>
                   </a>
                 )}
@@ -232,7 +232,7 @@ export const Details = ({entry, dispatch}) => {
           </div>
           <div className="flex">
             <div className="flex-shrink-0 w-8">
-              <FontAwesomeIcon icon={icons.faCamera} className="text-gray-300"/>
+              <FontAwesomeIcon icon={icons.faCamera} className="text-light-500"/>
             </div>
             <div>
               { (entry.make || entry.model) && (
@@ -254,7 +254,7 @@ export const Details = ({entry, dispatch}) => {
           {entry.objects.length > 0 && (
             <div className="flex">
               <div className="flex-shrink-0 w-8">
-                <FontAwesomeIcon icon={icons.faShapes} className="text-gray-300"/>
+                <FontAwesomeIcon icon={icons.faShapes} className="text-light-500"/>
               </div>
               <div>
                 <p className="inline-flex flex-wrap gap-2">{entry.objects.map(object => (
@@ -266,7 +266,7 @@ export const Details = ({entry, dispatch}) => {
           {entry.faces.length > 0 && (
             <div className="flex">
               <div className="flex-shrink-0 w-8">
-                <FontAwesomeIcon icon={icons.faUser} className="text-gray-300"/>
+                <FontAwesomeIcon icon={icons.faUser} className="text-light-500"/>
               </div>
               <div>
                 <p className="inline-flex flex-wrap gap-2">{entry.faces.map(face => (

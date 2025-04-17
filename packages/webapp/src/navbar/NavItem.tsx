@@ -16,9 +16,8 @@ type NavItemProps = {
 export const NavItem = ({onClick, icon, text, smText, disabled}: NavItemProps) => {
   return (
     <a className={classNames(
-      'flex gap-2 items-center justify-center px-2 py-2 rounded shadow  ', {
-        'text-gray-500 hover:bg-gray-700 hover:text-gray-300 hover:cursor-pointer active:bg-gray-600 active:text-gray-200': !disabled,
-        'text-gray-700 -outline-offset-1 border border-transparent hover:border-gray-600 hover:cursor-not-allowed': disabled})}
+      'flex gap-2 items-center justify-center px-2 py-2 rounded shadow  ',
+        'bg-light-600 text-light-50 hover:bg-light-500 hover:text-light-50 hover:cursor-pointer active:bg-light-700 active:text-light-50')}
       onClick={onClick}>
       <FontAwesomeIcon icon={icon} />
       <span className="max-md:hidden whitespace-nowrap">{text}</span>

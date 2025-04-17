@@ -12,7 +12,7 @@ const TagList = ({tags, withRemove, dispatch}: {tags: Tag[], withRemove: boolean
   return (
     <>
       {tags.map((tag, i) => (
-        <span key={toKey(tag)} className={classNames('flex items-center align-middle rounded overflow-auto text-gray-300', {'cursor-pointer': withRemove, 'bg-danger-600 hover:bg-danger-500': tag.remove, 'bg-gray-700 ': !tag.remove, 'hover:bg-gray-600': !tag.remove && withRemove})}>
+        <span key={toKey(tag)} className={classNames('flex items-center align-middle rounded overflow-auto text-light-50', {'cursor-pointer': withRemove, 'bg-danger-600 hover:bg-danger-500': tag.remove, 'bg-gray-700 ': !tag.remove, 'hover:bg-gray-600': !tag.remove && withRemove})}>
           { withRemove && (
             <>
               <span className="flex items-center justify-center px-2 py-1 pr-0">

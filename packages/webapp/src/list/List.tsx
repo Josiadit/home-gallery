@@ -30,8 +30,8 @@ const useViewHeight = (offset) => {
   return height
 }
 
-const mobileRowHeights = {minHeight: 75, maxHeight: 110, maxPotraitHeight: 185}
-const desktopRowHeights = {minHeight: 120, maxHeight: 200, maxPotraitHeight: 280}
+const desktopRowHeights = {minHeight: 400, maxHeight: 1000, maxPotraitHeight: 900}
+const mobileRowHeights = {minHeight: 200, maxHeight: 500, maxPotraitHeight: 450}
 
 export const List = () => {
   const entries = useEntryStore(state => state.entries)
@@ -45,7 +45,7 @@ export const List = () => {
   const [ deviceType ] = useDeviceType();
 
   const viewHeight = height - NAV_HEIGHT - BOTTOM_MARGIN
-  const padding = 8
+  const padding = 100
 
   const visibleEntries = useMemo(() => {
     if (!showSelected) {
@@ -67,16 +67,16 @@ export const List = () => {
   return (
     <>
       <MultiTagDialogProvider>
-        <>
+        <div className="bg-light-50">
           <NavBar />
           <div className="relative z-0">
-            <Scrollbar containerRef={containerRef}
-              style={{marginTop: 0, marginBottom: BOTTOM_MARGIN}}
-              pageHeight={viewHeight}
-              topDateItems={topDateItems} />
-            <FluentList rows={rows} padding={padding} />
+            {/*<Scrollbar containerRef={containerRef}*/}
+            {/*  style={{marginTop: 200, marginBottom: BOTTOM_MARGIN}}*/}
+            {/*  pageHeight={viewHeight}*/}
+            {/*  topDateItems={topDateItems} />*/}
+            <FluentList rows={rows} padding={padding}/>
           </div>
-        </>
+        </div>
       </MultiTagDialogProvider>
     </>
   )

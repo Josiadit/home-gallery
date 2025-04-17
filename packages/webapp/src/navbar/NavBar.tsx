@@ -18,7 +18,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-10 bg-gray-800">
+      <nav className="sticky top-0 z-10 bg-light-500">
         <div className="mx-auto">
           <div className="relative flex items-center justify-between h-12">
             <div className="flex px-2 space-x-2 overflow-x-visible">
@@ -29,6 +29,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
                 <EditNavBar showDialog={showDialog}/>
               )}
             </div>
+
             <div className="flex pr-2 space-x-4">
               <SearchInput focus={false} />
             </div>
@@ -45,7 +46,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-10 bg-gray-800">
+      <nav className="sticky top-0 z-10 bg-light-500">
         <div className="mx-auto">
           <div className="relative flex items-center justify-between h-12">
             { !showSearch && (
@@ -59,7 +60,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                   )}
                 </div>
                 <div className="flex pr-2 space-x-4">
-                  <div className="overflow-hidden border-gray-500 rounded">
+                  <div className="overflow-hidden rounded">
                     <SearchButton onClick={() => setShowSearch(true)}/>
                   </div>
                 </div>
@@ -71,7 +72,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                   <NavItem icon={icons.faArrowLeft} onClick={() => setShowSearch(false)} />
                 </div>
                 <div className="flex pr-2 space-x-4 grow">
-                  <div className="overflow-hidden border-gray-500 rounded grow">
+                  <div className="overflow-hidden rounded grow">
                     <SearchInput focus={true} />
                   </div>
                 </div>

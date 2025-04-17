@@ -95,8 +95,9 @@ const Cell = ({height, width, index, item, items}) => {
 const Row = (props) => {
   const style = {
     gap: '8px',
-    padding: '4px',
-    height: props.height
+    height: props.height,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
   const columns = props.columns;
   return (
@@ -139,10 +140,13 @@ export const FluentList = ({rows, padding}) => {
   }, [virtualScrollRef, rows, lastViewId])
 
   return (
-    <div className="relative w-full">
-      <VirtualScroll ref={virtualScrollRef} items={rows} padding={padding} >
-        {({row}) => <Row height={row.height} columns={row.columns}></Row>}
-      </VirtualScroll>
-    </div>
+      <div className="relative w-full min-h-screen">
+        <div className="relative h-[50px]"></div>
+        <VirtualScroll ref={virtualScrollRef} items={rows} padding={padding}>
+          {({row}) => <Row height={row.height} columns={row.columns}></Row>}
+        </VirtualScroll>
+        <div className="relative h-[100px]"></div>
+      </div>
+
   )
 }

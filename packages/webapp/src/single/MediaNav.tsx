@@ -47,16 +47,16 @@ export const MediaNav = ({current, prev, next, listLocation, showNavigation, dis
 
   const itemClass = "md:opacity-40 hover:opacity-100 hover:cursor-pointer"
   const buttonClass = "block flex items-center justify-center rounded w-8 h-8 md:w-12 md:h-12"
-  const buttonBgClass = "bg-gray-400/60 md:bg-gray-400/70"
-  const iconClass = "md:text-2xl text-gray-800"
+  const buttonBgClass = "bg-light-800/60 md:bg-light-800/70"
+  const iconClass = "md:text-2xl text-light-100"
 
   const hasGeo = current?.latitude && current?.longitude && current.latitude != 0 && current.longitude != 0
 
   return (
     <>
       <div className={classNames('absolute z-10 top-4 right-4 flex gap-2')}>
-        <a onClick={() => dispatch({type: 'list'})} className={classNames(buttonClass, itemClass, 'bg-transparent hover:bg-gray-400/40')} title="Show media stream (ESC)">
-          <FontAwesomeIcon icon={icons.faXmark} className={iconClass}/>
+        <a onClick={() => dispatch({type: 'list'})} className={classNames(buttonClass, itemClass, 'bg-transparent hover:bg-light-500/40')} title="Show media stream (ESC)">
+          <FontAwesomeIcon icon={icons.faXmark} className="text-light-700 hover:text-light-50 md:text-2xl" />
         </a>
       </div>
       { prev &&

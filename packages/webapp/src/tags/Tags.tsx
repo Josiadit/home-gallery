@@ -32,13 +32,13 @@ export const Tags = () => {
   return (
     <>
       <NavBar disableEdit={true} />
-      <h2 className="m-4 text-xl text-gray-400">Tags</h2>
+      <h2 className="m-4 text-xl text-light-700 font-bold font-serif">Tags</h2>
       <ul className="m-4">
         {tags.map(tag => {
             let query = searchLink(tag.tag)
             return (
               <li className="border border-collapse border-gray-800" key={tag.tag}>
-                <Link className="block p-4 text-gray-500 hover:text-gray-300 hover:bg-gray-700 hover:cursor-pointer"
+                <Link className="block p-4 text-light-700 hover:text-light-50 hover:bg-light-600 hover:cursor-pointer"
                   to={`/search/${query}`}>
                   <span className="flex items-center justify-start gap-2 ">
                     <FontAwesomeIcon icon={icons.faTag} />
