@@ -43,7 +43,8 @@ jobs:
           fi
 
           echo "{\"version\":\"${BUILD_VERSION}\",\"commit\":\"${GITHUB_SHA}\",\"created\":\"$(date -Is)\",\"createdBy\":\"github action #${{ github.run_id }}\"}" | tee .build.json
-
+          echo "${DOCKER_IMAGE}"
+  
           # Set output parameters.
           echo tags=${TAGS} >> $GITHUB_OUTPUT
           echo docker_image=${DOCKER_IMAGE} >> $GITHUB_OUTPUT
