@@ -16,6 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug Secrets
+        run: |
+          echo "DOCKER_TOKEN is set: ${{ secrets.DOCKER_TOKEN != '' }}"
+
       - name: Prepare
         id: prepare
         run: |
@@ -43,7 +47,8 @@ jobs:
           fi
 
           echo "{\"version\":\"${BUILD_VERSION}\",\"commit\":\"${GITHUB_SHA}\",\"created\":\"$(date -Is)\",\"createdBy\":\"github action #${{ github.run_id }}\"}" | tee .build.json
-
+          echo "${DOCKER_IMAGE}"
+  
           # Set output parameters.
           echo tags=${TAGS} >> $GITHUB_OUTPUT
           echo docker_image=${DOCKER_IMAGE} >> $GITHUB_OUTPUT
