@@ -120,19 +120,19 @@ steps:
     event:
     - push
 
-- name: notify
-  image: sfelis/drone-email
-  settings:
-    from:
-      from_secret: mail_from
-    host:
-      from_secret: mail_host
-    port:
-      from_secret: mail_port
-    username:
-      from_secret: mail_username
-    password:
-      from_secret: mail_password
-  when:
-    status:
-    - failure
+#- name: notify
+#  image: sfelis/drone-email
+#  settings:
+#    from:
+#      from_secret: mail_from
+#    host:
+#      from_secret: mail_host
+#    port:
+#      from_secret: mail_port
+#    username:
+#      from_secret: mail_username
+#    password:
+#      from_secret: mail_password
+#  when:
+#    status:
+#    - failure
