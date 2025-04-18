@@ -1,50 +1,13 @@
-![HomeGallery hero image](https://home-gallery.org/hero.png "self-hosted open-source web gallery")
+# Home Gallery
 
-# HomeGallery
-
-[![Join the chat at https://gitter.im/home-gallery/community](https://badges.gitter.im/home-gallery/community.svg)](https://gitter.im/home-gallery/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[Home-Gallery.org](https://home-gallery.org) is a self-hosted open-source web gallery
-to browse personal photos and videos featuring tagging, mobile-friendly, and AI
-powered image and face discovery. Try the [demo gallery](https://demo.home-gallery.org)
-or enjoy the [food images](https://demo.home-gallery.org/similar/c7f8a3bf0142fc9694f517c23e42d988c97233c3)!
-
-**Note:** This software is a private pet/spare time project without any warranty.
-Ask questions on [gitter.im](https://gitter.im/home-gallery/community) or [Discord](https://discord.gg/kbvmvadCwe).
-
-Do you like HomeGallery? Does it solve your media problem?
-Would you like to help? Please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines and
-support this project through any recurring financial support to my
-[patreon.com/xemle](https://www.patreon.com/xemle) or one time support to my
-[paypal.me/xemle](https://paypal.me/xemle) account. Thank you in advance.
+Forked from xemle's home-gallery. Most of the work was done by him.
+[Home-Gallery.org](https://home-gallery.org)
 
 [MIT License](https://en.wikipedia.org/wiki/MIT_License)
 
 ## Links
 
-* [Homepage](https://home-gallery.org)
-* [Demo gallery](https://demo.home-gallery.org)
-* Latest binaries for [Linux](https://dl.home-gallery.org/dist/latest/home-gallery-latest-linux-x64),
-[Mac](https://dl.home-gallery.org/dist/latest/home-gallery-latest-darwin-x64),
-[Windows](https://dl.home-gallery.org/dist/latest/home-gallery-latest-win-x64.exe)
-[Docker image](https://hub.docker.com/r/xemle/home-gallery)
-* [Documentation](https://docs.home-gallery.org)
-* [Changelog](CHANGELOG.md)
-
-## Motivation
-
-* The source of all my private images and videos are stored local on my NAS at home. The gallery should be on top/close of the source.
-* Cloud service do not cover my privacy concerns
-* All gallery software are lacking to have a fast user experience on mobile phones
-* The gallery software should help to browse and discover forgotten memories from the complete media archive
-
-## Target Users
-
-* Computer affine users who solve their own problems and go the extra mile
-* Serve your local data without usage of cloud services
-* One user only - all files are served
-* View your own photos and videos from mobile phones
-* Serve all your images from multiple media source directories (hard drive, camera files, mobile phone files, etc)
+[Docker image](https://hub.docker.com/r/josiadit/home-gallery)
 
 ## Quickstart
 
@@ -95,16 +58,6 @@ The gallery configuration can be found in `./data/config/gallery.config.yml` for
 Want to use docker compose? See [install](https://docs.home-gallery.org/install/index.html)
 section in the documentation for further information.
 
-## Documentation
-
-See [docs.home-gallery.org](https://docs.home-gallery.org) for general documentation.
-
-* [Installation](https://docs.home-gallery.org/install)
-* [CLI help](https://docs.home-gallery.org/cli)
-* [Configuration](https://docs.home-gallery.org/configuration)
-* [FAQ](https://docs.home-gallery.org/faq)
-* [Architecture](https://docs.home-gallery.org/internals)
-
 ## Features
 
 - Endless photo stream via virtual scrolling
@@ -118,7 +71,7 @@ See [docs.home-gallery.org](https://docs.home-gallery.org) for general documenta
 - Support of read only and offline media sources. Once the preview files are generated and their meta data are extracted, the original sources are not touched and required any more. So media from offline disk need to be extracted only once and the disk can stay offline on next runs
 - Media are identified by their content. Duplicated media (identical files byte-by-byte) are only processed once. Renaming is supported without recalculating previews etc.
 - Fast file changes detection such as add, removes, renames or moves
-- Static web gallery site export such as the [demo gallery](https://demo.home-gallery.org)
+- Static web gallery site export
 - Meta data export to XMP sidecar files
 - Stream photos and videos to Chromcast enabled TV devices
 - Runs on SoC such Raspberry PI
@@ -130,22 +83,9 @@ The complete "database" is loaded into the browser. My 100.000 media are about
 current mobile device. A user reported a successful setup with over 400.000
 media files. Further feedback is welcome.
 
-## Binary Downloads
-
-HomeGallery has prebuilt binaries for
-[Linux](https://dl.home-gallery.org/dist/latest/home-gallery-latest-linux-x64),
-[MacOS](https://dl.home-gallery.org/dist/latest/home-gallery-latest-darwin-x64) and
-[Windows](https://dl.home-gallery.org/dist/latest/home-gallery-latest-win-x64.exe).
-Further download options can be found [here](https://dl.home-gallery.org/dist).
-
-See [installation](https://docs.home-gallery.org/install) section for usage.
-
 # External Services and Privacy
 
-The goal of HomeGallery is to use as less public services as possible
-due sensitive private image data. It tries to use service which can
-be deployed local. However the setup requires technical knowledge and
-technical maintenance. Following services are called:
+Following services are called:
 
 For geo reverse lookups (geo coordinates to address), HomeGallery
 queries the [Nominatim Service](https://nominatim.openstreetmap.org/reverse)
@@ -153,8 +93,8 @@ from [OpenStreetMap](https://openstreetmap.org). Only geo coordinates
 are transmitted.
 
 For reverse image lookups (similar image search), object detection and face
-recognition, HomeGallery uses the
-its own public API at `api.home-gallery.org`. This public API supports
+recognition, this program uses the
+the public API from xemle's Home Gallery `api.home-gallery.org`. This public API supports
 low powered devices such as the SoC Raspberry PI and all preview images are
 send to this public API by default. No images or privacy data are kept.
 

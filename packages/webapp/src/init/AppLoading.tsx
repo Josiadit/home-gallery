@@ -52,7 +52,7 @@ export const AppLoading : React.FC<{state: TAppLoadingProps}> = ({state}) => {
       <div className="container">
         <AppIcon state={state} />
         {state.isLoading && (
-          <p>Your Home Gallery is loading<Dots /></p>
+          <p>Gallery is loading<Dots /></p>
         )}
         {state.hasError && (
           <h1 className="text-red-600">The app could not be loaded</h1>
