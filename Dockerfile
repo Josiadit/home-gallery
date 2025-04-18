@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 ARG TARGETPLATFORM
 ARG NO_SHARP
 
-COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE CHANGELOG.md CONTRIBUTING.md /build/
+COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE /build/
 COPY e2e /build/e2e/
 COPY packages /build/packages/
 COPY scripts /build/scripts/
