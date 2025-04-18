@@ -20,10 +20,10 @@ RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
 
 # Final image
 FROM node:20-alpine
-LABEL org.opencontainers.image.authors="sebastian@silef.de"
+LABEL org.opencontainers.image.authors="github@josia.eu"
 LABEL org.opencontainers.image.url="https://home-gallery.org"
 LABEL org.opencontainers.image.documentation="https://docs.home-gallery.org"
-LABEL org.opencontainers.image.source="https://github.com/xemle/home-gallery"
+LABEL org.opencontainers.image.source="https://github.com/josiadit/home-gallery"
 
 RUN apk add --no-cache \
   ffmpeg \
