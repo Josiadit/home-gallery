@@ -15,7 +15,9 @@ import { MultiTagDialogProvider } from "../dialog/tag-dialog-provider";
 // Single-image-per-row layout configuration
 const DESKTOP_ROW_CONFIG = {minHeight: 400, maxHeight: 1000, maxPotraitHeight: 900}
 const MOBILE_ROW_CONFIG = {minHeight: 200, maxHeight: 500, maxPotraitHeight: 450}
-const PADDING = 100
+const PADDING = 100  // Space between rows/images
+const TOP_PADDING = 50  // Space from navbar to first image
+const BOTTOM_PADDING = 100  // Space from last image to bottom
 
 export const List = () => {
   const entries = useEntryStore(state => state.entries)
@@ -43,7 +45,7 @@ export const List = () => {
         <div className="bg-light-50">
           <NavBar />
           <div className="relative z-0">
-            <FluentList rows={rows} padding={PADDING} />
+            <FluentList rows={rows} padding={PADDING} topPadding={TOP_PADDING} bottomPadding={BOTTOM_PADDING} />
           </div>
         </div>
       </MultiTagDialogProvider>

@@ -112,7 +112,7 @@ const findCellById = (rows, id) => {
   return [null, -1]
 }
 
-export const FluentList = ({rows, padding}) => {
+export const FluentList = ({rows, padding, topPadding = 50, bottomPadding = 100}) => {
   const lastViewId = useSingleViewStore(state => state.lastId);
   const [lastRowIndex, setLastRowIndex] = useState(-1)
 
@@ -134,11 +134,11 @@ export const FluentList = ({rows, padding}) => {
 
   return (
       <div className="relative w-full min-h-screen">
-        <div className="relative h-[50px]"></div>
+        <div className="relative" style={{height: `${topPadding}px`}}></div>
         <VirtualScroll ref={virtualScrollRef} items={rows} padding={padding}>
           {({row}) => <Row row={row} />}
         </VirtualScroll>
-        <div className="relative h-[100px]"></div>
+        <div className="relative" style={{height: `${bottomPadding}px`}}></div>
       </div>
 
   )
