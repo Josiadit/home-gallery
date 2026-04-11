@@ -7,14 +7,12 @@ import Hammer from 'hammerjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 
-import { useLastLocation } from '../utils/lastLocation/useLastLocation'
-import useBodyDimensions from '../utils/useBodyDimensions';
 import { VirtualScroll } from "./VirtualScroll";
 import { humanizeDuration } from "../utils/format";
-import { getHigherPreviewUrl, getWidthFactor } from '../utils/preview';
+import { getHigherPreviewUrl } from '../utils/preview';
 import { classNames } from '../utils/class-names'
 
-const Cell = ({height, width, index, item, items}) => {
+const Cell = ({height, width, item}) => {
   const ref = useRef();
   const location = useLocation();
   const viewMode = useEditModeStore(state => state.viewMode);
@@ -26,11 +24,10 @@ const Cell = ({height, width, index, item, items}) => {
   const style = { height, width, backgroundColor: (vibrantColors && vibrantColors[1]) || 'inherited' }
   const navigate = useNavigate();
 
-  const widthFactor = getWidthFactor(width, height);
-  const previewUrl = getHigherPreviewUrl(previews, width * widthFactor * (window.devicePixelRatio || 1));
+  const previewUrl = getHigherPreviewUrl(previews, width * (window.devicePixelRatio || 1));
 
   const showImage = () => {
-    navigate(`/view/${shortId}`, {state: {listLocation: location, index}});
+    navigate(`/view/${shortId}`, {state: {listLocation: location}});
   }
 
   const onClick = (selectRange) => {
@@ -81,7 +78,7 @@ const Cell = ({height, width, index, item, items}) => {
 
   return (
     <div ref={ref} key={id} className={classNames('relative group', {'outline outline-4 outline-primary-300 outline-offset-[-0.25rem] brightness-110 saturate-[1.3]': isSelected()})} style={style}>
-      <img className={classNames('object-cover')} style={style} src={previewUrl} loading="lazy" />
+      <img className={classNames('object-cover')} style={style} src={previewUrl || ''} alt={id} loading="lazy" />
       {type == 'video' &&
         <span className="absolute flex flex-row items-center gap-2 px-2 text-sm text-gray-100 bg-gray-900 rounded bottom-2 right-2 lg:bg-gray-900/60 group-hover:bg-gray-900">
           <FontAwesomeIcon icon={faPlay} size="sm"/>
@@ -92,17 +89,15 @@ const Cell = ({height, width, index, item, items}) => {
   )
 }
 
-const Row = (props) => {
-  const style = {
-    gap: '8px',
-    height: props.height,
-    justifyContent: 'center',
-    alignItems: 'center'
+const Row = ({row}) => {
+  if (!row || !row.columns || row.columns.length === 0) {
+    return null;
   }
-  const columns = props.columns;
+  const cell = row.columns[0]; // Always single column in new layout
+
   return (
-    <div className="flex w-full item-center" style={style}>
-      {columns.map((cell, index) => <Cell key={index} width={cell.width} height={cell.height} item={cell.item} index={cell.index} items={cell.items} />)}
+    <div className="flex w-full justify-center items-center" style={{height: row.height}}>
+      <Cell width={cell.width} height={cell.height} item={cell.item} />
     </div>
   )
 }
@@ -118,8 +113,6 @@ const findCellById = (rows, id) => {
 }
 
 export const FluentList = ({rows, padding}) => {
-  const { width } = useBodyDimensions();
-
   const lastViewId = useSingleViewStore(state => state.lastId);
   const [lastRowIndex, setLastRowIndex] = useState(-1)
 
@@ -143,7 +136,7 @@ export const FluentList = ({rows, padding}) => {
       <div className="relative w-full min-h-screen">
         <div className="relative h-[50px]"></div>
         <VirtualScroll ref={virtualScrollRef} items={rows} padding={padding}>
-          {({row}) => <Row height={row.height} columns={row.columns}></Row>}
+          {({row}) => <Row row={row} />}
         </VirtualScroll>
         <div className="relative h-[100px]"></div>
       </div>
