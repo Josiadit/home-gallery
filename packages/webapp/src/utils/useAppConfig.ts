@@ -9,6 +9,9 @@ const defaultConfig = {
    * A feature will be expanded to `disabledEdit: true`
    */
   disabled: [],
+  pages: {
+    disabled: []
+  },
   pluginManager: {
     plugins: []
   },

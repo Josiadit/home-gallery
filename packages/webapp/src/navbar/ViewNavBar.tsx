@@ -19,6 +19,8 @@ export const ViewNavBar = ({disableEdit}) => {
   const listLocation = useListLocation()
   const appConfig = useAppConfig()
 
+  const disabledPages = appConfig.pages?.disabled || []
+
   const items = [
     {
       icon: icons.faGlobe,
@@ -27,19 +29,19 @@ export const ViewNavBar = ({disableEdit}) => {
         navigate('/')
         search({type: 'none'});
       },
-      disabled: false,
+      disabled: disabledPages.includes('showall'),
     },
     {
       icon: icons.faClock,
       text: 'Years',
       action: () => navigate('/years'),
-      disabled: false,
+      disabled: disabledPages.includes('years'),
     },
     {
       icon: icons.faPlay,
       text: 'Videos',
       action: () => navigate('/search/type:video'),
-      disabled: true,
+      disabled: disabledPages.includes('video'),
     },
     {
       icon: icons.faPen,
@@ -50,7 +52,7 @@ export const ViewNavBar = ({disableEdit}) => {
         }
         setViewMode(viewMode === ViewMode.VIEW ? ViewMode.EDIT : ViewMode.VIEW)
       },
-      disabled: disableEdit || appConfig.disabledEdit,
+      disabled: disableEdit || appConfig.disabledEdit || disabledPages.includes('edit'),
     },
     {
       icon: icons.faTags,
@@ -61,13 +63,13 @@ export const ViewNavBar = ({disableEdit}) => {
         }
         navigate('/tags')
       },
-      disabled: disableEdit || appConfig.disabledEdit,
+      disabled: disableEdit || appConfig.disabledEdit || disabledPages.includes('tag'),
     },
     {
       icon: icons.faMap,
       text: 'Map',
       action: () => navigate('/map', {state: {listLocation}}),
-      disabled: true,
+      disabled: disabledPages.includes('map'),
     },
   ]
 

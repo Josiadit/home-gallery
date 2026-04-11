@@ -6,6 +6,7 @@ import { useEditModeStore, ViewMode } from '../store/edit-mode-store';
 import { useTagDialog } from "../dialog/use-tag-dialog";
 import { addTags } from '../api/ApiService';
 import { useDeviceType, DeviceType } from "../utils/useDeviceType";
+import { useAppConfig } from "../utils/useAppConfig";
 import { Tag } from "../api/models";
 
 import { EditNavBar } from './EditNavBar';
@@ -15,6 +16,8 @@ import { SearchInput, SearchButton } from "./SearchInput";
 
 export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
   const viewMode = useEditModeStore(state => state.viewMode);
+  const appConfig = useAppConfig();
+  const disabledPages = appConfig.pages?.disabled || [];
 
   return (
     <>
@@ -31,7 +34,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
             </div>
 
             <div className="flex pr-2 space-x-4">
-              <SearchInput focus={false} />
+              {!disabledPages.includes('search') && <SearchInput focus={false} />}
             </div>
           </div>
         </div>
@@ -43,6 +46,8 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
 export const MobileNavBar = ({disableEdit = false, showDialog}) => {
   const [showSearch, setShowSearch] = useState(false)
   const viewMode = useEditModeStore(state => state.viewMode);
+  const appConfig = useAppConfig();
+  const disabledPages = appConfig.pages?.disabled || [];
 
   return (
     <>
@@ -60,9 +65,11 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                   )}
                 </div>
                 <div className="flex pr-2 space-x-4">
-                  <div className="overflow-hidden rounded">
-                    <SearchButton onClick={() => setShowSearch(true)}/>
-                  </div>
+                  {!disabledPages.includes('search') && (
+                    <div className="overflow-hidden rounded">
+                      <SearchButton onClick={() => setShowSearch(true)}/>
+                    </div>
+                  )}
                 </div>
               </>
             )}

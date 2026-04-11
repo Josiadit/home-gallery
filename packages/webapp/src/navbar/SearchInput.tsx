@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import * as icons from '@fortawesome/free-solid-svg-icons'
 
 import {useSearchStore} from "../store/search-store";
+import { useAppConfig } from "../utils/useAppConfig";
 
 export const SearchButton = ({onClick}) => {
     return (
@@ -19,10 +20,14 @@ export const SearchButton = ({onClick}) => {
 
 export const SearchInput = ({focus}) => {
     const query = useSearchStore(state => state.query);
+    const appConfig = useAppConfig();
 
     const [term, setTerm] = useState(query.type == 'query' ? query.value : query.query || '');
 
     const navigate = useNavigate();
+
+    const disabledPages = appConfig.pages?.disabled || [];
+    const isSearchDisabled = disabledPages.includes('search');
 
     const onSearch = (termInput) => {
         if (!termInput) {
@@ -49,14 +54,16 @@ export const SearchInput = ({focus}) => {
 
     return (
         <>
-            <div
-                className="flex gap-2 overflow-hidden border border-light-700 rounded focus-within:border-light-700 hover:cursor-pointer">
-                <input
-                    className="flex-1 px-2 text-light-50 bg-transparent border-0 focus:border-transparent focus:ring-0 focus:outline-none placeholder-light-400"
-                    value={term || ''} onChange={onChange} onKeyUp={onKeyUp}
-                    ref={input => input && focus && input.focus()} placeholder="Search..."/>
-                <SearchButton onClick={() => onSearch(term)}/>
-            </div>
+            {!isSearchDisabled && (
+                <div
+                    className="flex gap-2 overflow-hidden border border-light-700 rounded focus-within:border-light-700 hover:cursor-pointer">
+                    <input
+                        className="flex-1 px-2 text-light-50 bg-transparent border-0 focus:border-transparent focus:ring-0 focus:outline-none placeholder-light-400"
+                        value={term || ''} onChange={onChange} onKeyUp={onKeyUp}
+                        ref={input => input && focus && input.focus()} placeholder="Search..."/>
+                    <SearchButton onClick={() => onSearch(term)}/>
+                </div>
+            )}
         </>
     )
 }
