@@ -13,9 +13,10 @@ import { fluent } from "./fluent";
 import { MultiTagDialogProvider } from "../dialog/tag-dialog-provider";
 
 // Single-image-per-row layout configuration
-const DESKTOP_ROW_CONFIG = {minHeight: 400, maxHeight: 1000, maxPotraitHeight: 900}
-const MOBILE_ROW_CONFIG = {minHeight: 200, maxHeight: 500, maxPotraitHeight: 450}
+const DESKTOP_ROW_CONFIG = {minHeight: 400, maxHeight: 800, maxPotraitHeight: 900}
+const MOBILE_ROW_CONFIG = {minHeight: 200, maxHeight: 400, maxPotraitHeight: 450}
 const PADDING = 100  // Space between rows/images
+const SIDE_MARGIN = 50  // Horizontal margin on each side
 const TOP_PADDING = 50  // Space from navbar to first image
 const BOTTOM_PADDING = 100  // Space from last image to bottom
 
@@ -36,7 +37,7 @@ export const List = () => {
 
   const rows = useMemo(() => {
     const config = deviceType === DeviceType.MOBILE ? MOBILE_ROW_CONFIG : DESKTOP_ROW_CONFIG
-    return fluent(visibleEntries, { padding: PADDING, width, ...config });
+    return fluent(visibleEntries, { padding: PADDING, width, sideMargin: SIDE_MARGIN, ...config });
   }, [width, visibleEntries, deviceType])
 
   return (

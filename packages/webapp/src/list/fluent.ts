@@ -33,7 +33,7 @@ export interface IFluentRow {
  * Each image is scaled to fit the available width while maintaining its aspect ratio.
  */
 export const fluent = (items, options): IFluentRow[] => {
-	const { minHeight, maxHeight, maxPotraitHeight, width, padding } = Object.assign({}, defaultOptions, options);
+	const { minHeight, maxHeight, maxPotraitHeight, width, padding, sideMargin = 50 } = Object.assign({}, defaultOptions, options);
 
 	const result: IFluentRow[] = [];
 
@@ -47,8 +47,8 @@ export const fluent = (items, options): IFluentRow[] => {
 		// Calculate the scaled width for the image
 		let scaledWidth = +(targetHeight * aspectRatio).toFixed();
 
-		if (scaledWidth + 50 >= width) {
-			scaledWidth = width - 50;
+		if (scaledWidth + sideMargin >= width) {
+			scaledWidth = width - sideMargin;
 			targetHeight = +(scaledWidth / aspectRatio).toFixed();
 
 			if (targetHeight < minHeight) {
