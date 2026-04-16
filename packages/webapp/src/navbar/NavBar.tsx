@@ -21,6 +21,9 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
   const disabledPages = appConfig.pages?.disabled || [];
   const centerText = appConfig.navbar?.center_text?.text;
   const centerTextPadding = appConfig.navbar?.center_text?.padding || 8;
+  const centerTextFont = appConfig.navbar?.center_text?.fontFamily;
+  const centerTextSize = appConfig.navbar?.center_text?.fontSize;
+  const centerTextWeight = appConfig.navbar?.center_text?.fontWeight;
 
   return (
     <>
@@ -36,7 +39,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
               )}
             </div>
 
-            {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} />}
+            {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} />}
 
             <div className="flex pr-2 space-x-4">
               {!disabledPages.includes('search') && <SearchInput focus={false} />}
@@ -55,6 +58,9 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
   const disabledPages = appConfig.pages?.disabled || [];
   const centerText = appConfig.navbar?.center_text?.text;
   const centerTextPadding = appConfig.navbar?.center_text?.padding || 8;
+  const centerTextFont = appConfig.navbar?.center_text?.fontFamily;
+  const centerTextSize = appConfig.navbar?.center_text?.fontSize;
+  const centerTextWeight = appConfig.navbar?.center_text?.fontWeight;
 
   return (
     <>
@@ -71,7 +77,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                     <EditNavBar showDialog={showDialog}/>
                   )}
                 </div>
-                {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} />}
+                {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} />}
                 <div className="flex pr-2 space-x-4">
                   {!disabledPages.includes('search') && (
                     <div className="overflow-hidden rounded">

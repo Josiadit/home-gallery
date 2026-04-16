@@ -5,13 +5,16 @@ interface CenteredNavBarTextProps {
   text: string;
   className?: string;
   padding?: number;
+  fontFamily?: string;
+  fontSize?: string;
+  fontWeight?: string | number;
 }
 
 /**
  * Centered text component for navbar that hides when it overlaps with buttons.
  * Buttons have priority and will always be visible.
  */
-export const CenteredNavBarText = ({ text, className = "", padding = 8 }: CenteredNavBarTextProps) => {
+export const CenteredNavBarText = ({ text, className = "", padding = 8, fontFamily, fontSize, fontWeight }: CenteredNavBarTextProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -132,6 +135,11 @@ export const CenteredNavBarText = ({ text, className = "", padding = 8 }: Center
       <div
         ref={textRef}
         className="text-light-50 font-medium text-center whitespace-nowrap"
+        style={{
+          ...(fontFamily && { fontFamily }),
+          ...(fontSize && { fontSize }),
+          ...(fontWeight && { fontWeight })
+        }}
       >
         {text}
       </div>
