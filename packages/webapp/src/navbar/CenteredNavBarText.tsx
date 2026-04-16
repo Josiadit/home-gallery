@@ -41,45 +41,64 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
       // Get search button (mobile)
       const searchButtons = navbar.querySelectorAll('button[class*="flex items-center justify-center gap-2"]');
 
+      const padding = 8;
       let hasOverlap = false;
 
-      // Check if text fits in screen width
-      if (textRect.width > window.innerWidth) {
+      // Check if text fits in screen width with padding
+      if (textRect.width > window.innerWidth - (2 * padding)) {
         hasOverlap = true;
       }
 
-      // Check NavItem buttons
+      // Check NavItem buttons with horizontal padding
       buttons.forEach((button) => {
         const buttonRect = button.getBoundingClientRect();
+        const paddedRect = {
+          left: buttonRect.left - padding,
+          right: buttonRect.right + padding,
+          top: buttonRect.top,
+          bottom: buttonRect.bottom
+        };
         // Check if text overlaps with button
-        if (!(textRect.right < buttonRect.left ||
-              textRect.left > buttonRect.right ||
-              textRect.bottom < buttonRect.top ||
-              textRect.top > buttonRect.bottom)) {
+        if (!(textRect.right < paddedRect.left ||
+              textRect.left > paddedRect.right ||
+              textRect.bottom < paddedRect.top ||
+              textRect.top > paddedRect.bottom)) {
           hasOverlap = true;
         }
       });
 
-      // Check search input container
+      // Check search input container with horizontal padding
       if (searchContainer) {
         const searchRect = searchContainer.getBoundingClientRect();
+        const paddedRect = {
+          left: searchRect.left - padding,
+          right: searchRect.right + padding,
+          top: searchRect.top,
+          bottom: searchRect.bottom
+        };
         // Check if text overlaps with search input
-        if (!(textRect.right < searchRect.left ||
-              textRect.left > searchRect.right ||
-              textRect.bottom < searchRect.top ||
-              textRect.top > searchRect.bottom)) {
+        if (!(textRect.right < paddedRect.left ||
+              textRect.left > paddedRect.right ||
+              textRect.bottom < paddedRect.top ||
+              textRect.top > paddedRect.bottom)) {
           hasOverlap = true;
         }
       }
 
-      // Check search button (mobile)
+      // Check search button (mobile) with horizontal padding
       searchButtons.forEach((button) => {
         const buttonRect = button.getBoundingClientRect();
+        const paddedRect = {
+          left: buttonRect.left - padding,
+          right: buttonRect.right + padding,
+          top: buttonRect.top,
+          bottom: buttonRect.bottom
+        };
         // Check if text overlaps with search button
-        if (!(textRect.right < buttonRect.left ||
-              textRect.left > buttonRect.right ||
-              textRect.bottom < buttonRect.top ||
-              textRect.top > buttonRect.bottom)) {
+        if (!(textRect.right < paddedRect.left ||
+              textRect.left > paddedRect.right ||
+              textRect.bottom < paddedRect.top ||
+              textRect.top > paddedRect.bottom)) {
           hasOverlap = true;
         }
       });
