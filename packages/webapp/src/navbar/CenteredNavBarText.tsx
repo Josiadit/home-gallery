@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from "react";
 interface CenteredNavBarTextProps {
   text: string;
   className?: string;
+  padding?: number;
 }
 
 /**
  * Centered text component for navbar that hides when it overlaps with buttons.
  * Buttons have priority and will always be visible.
  */
-export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextProps) => {
+export const CenteredNavBarText = ({ text, className = "", padding = 8 }: CenteredNavBarTextProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -41,7 +42,6 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
       // Get search button (mobile)
       const searchButtons = navbar.querySelectorAll('button[class*="flex items-center justify-center gap-2"]');
 
-      const padding = 8;
       let hasOverlap = false;
 
       // Check if text fits in screen width with padding
@@ -120,7 +120,7 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
       window.removeEventListener('resize', checkVisibility);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [padding]);
 
   return (
     <div

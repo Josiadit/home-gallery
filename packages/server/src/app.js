@@ -106,6 +106,7 @@ export function createApp(context) {
     const disabled = config?.webapp?.disabled || []
     const pages = config?.webapp?.pages || {}
     const list = config?.webapp?.list || {}
+    const navbar = config?.webapp?.navbar || {}
     const plugins = pluginApi.pluginEntries
     const entries = await getFirstEntries(50, req)
     const sources = (config.sources || []).filter(source => source.downloadable && !source.offline)
@@ -120,6 +121,7 @@ export function createApp(context) {
       disabled: !!req.username ? [...disabled, 'pwa'] : disabled,
       pages,
       list,
+      navbar,
       pluginManager: {
         plugins
       },

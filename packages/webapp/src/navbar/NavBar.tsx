@@ -19,6 +19,8 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
   const viewMode = useEditModeStore(state => state.viewMode);
   const appConfig = useAppConfig();
   const disabledPages = appConfig.pages?.disabled || [];
+  const centerText = appConfig.navbar?.center_text?.text || 'Gallery';
+  const centerTextPadding = appConfig.navbar?.center_text?.padding || 8;
 
   return (
     <>
@@ -34,7 +36,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
               )}
             </div>
 
-            <CenteredNavBarText text="Gallery" />
+            <CenteredNavBarText text={centerText} padding={centerTextPadding} />
 
             <div className="flex pr-2 space-x-4">
               {!disabledPages.includes('search') && <SearchInput focus={false} />}
@@ -51,6 +53,8 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
   const viewMode = useEditModeStore(state => state.viewMode);
   const appConfig = useAppConfig();
   const disabledPages = appConfig.pages?.disabled || [];
+  const centerText = appConfig.navbar?.center_text?.text || 'Gallery';
+  const centerTextPadding = appConfig.navbar?.center_text?.padding || 8;
 
   return (
     <>
@@ -67,7 +71,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                     <EditNavBar showDialog={showDialog}/>
                   )}
                 </div>
-                <CenteredNavBarText text="Gallery" />
+                <CenteredNavBarText text={centerText} padding={centerTextPadding} />
                 <div className="flex pr-2 space-x-4">
                   {!disabledPages.includes('search') && (
                     <div className="overflow-hidden rounded">
