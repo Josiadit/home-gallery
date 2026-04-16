@@ -212,24 +212,26 @@ export const Details = ({entry, dispatch}) => {
               </div>
             </>
           )}
-          <div className="flex">
-            <div className="flex-shrink-0 w-8">
-              <FontAwesomeIcon icon={icons.faTags} className="text-light-500"/>
-            </div>
-            <div>
-              <p className="inline-flex flex-wrap gap-2">
-                {entry.tags.map(tag => (
-                  <a className="px-2 py-1 text-gray-300 bg-gray-800 rounded hover:bg-gray-700 hover:text-gray-200 hover:cursor-pointer" onClick={() => dispatchSearch(`${queryTerm("tag", tag)}`)} title={`Search for tag ${tag}`}>{tag}</a>
-                ))}
-                {!appConfig.disabledEdit && (
-                  <a className="flex items-center gap-2 px-2 py-1 text-light-700 bg-transparent border border-light-700 rounded group inset-1 hover:bg-light-700 hover:text-light-50 hover:cursor-pointer active:bg-light-500" onClick={editTags} title={`Edit single tags`}>
-                    <FontAwesomeIcon icon={icons.faPen} className="text-light-600 group-hover:text-light-50"/>
-                    <span>Edit tags</span>
-                  </a>
-                )}
-              </p>
-            </div>
-          </div>
+           {(entry.tags.length > 0 || !appConfig.disabledEdit) && (
+             <div className="flex">
+               <div className="flex-shrink-0 w-8">
+                 <FontAwesomeIcon icon={icons.faTags} className="text-light-500"/>
+               </div>
+               <div>
+                 <p className="inline-flex flex-wrap gap-2">
+                   {entry.tags.map(tag => (
+                     <a className="px-2 py-1 text-gray-300 bg-gray-800 rounded hover:bg-gray-700 hover:text-gray-200 hover:cursor-pointer" onClick={() => dispatchSearch(`${queryTerm("tag", tag)}`)} title={`Search for tag ${tag}`}>{tag}</a>
+                   ))}
+                   {!appConfig.disabledEdit && (
+                     <a className="flex items-center gap-2 px-2 py-1 text-light-700 bg-transparent border border-light-700 rounded group inset-1 hover:bg-light-700 hover:text-light-50 hover:cursor-pointer active:bg-light-500" onClick={editTags} title={`Edit single tags`}>
+                       <FontAwesomeIcon icon={icons.faPen} className="text-light-600 group-hover:text-light-50"/>
+                       <span>Edit tags</span>
+                     </a>
+                   )}
+                 </p>
+               </div>
+             </div>
+           )}
           <div className="flex">
             <div className="flex-shrink-0 w-8">
               <FontAwesomeIcon icon={icons.faCamera} className="text-light-500"/>
