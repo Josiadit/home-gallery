@@ -191,7 +191,7 @@ sources:
 #
 # Webapp configuration
 #
-webapp:
+#webapp:
    # Disabled webapp features
    #disabled:
      #- edit
@@ -199,6 +199,15 @@ webapp:
      #- pwa
      #- offlineDatabase
      #- worker
+   #pages:
+     #disabled:
+       #- showall
+       #- years
+       #- video
+       #- edit
+       #- tags
+       #- map
+       #- search
    # List view layout configuration
    #list:
      # Desktop row configuration
