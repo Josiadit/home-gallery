@@ -16,7 +16,7 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const checkOverlap = () => {
+    const checkVisibility = () => {
       if (!textRef.current || !containerRef.current) {
         setIsVisible(false);
         return;
@@ -42,6 +42,11 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
       const searchButtons = navbar.querySelectorAll('button[class*="flex items-center justify-center gap-2"]');
 
       let hasOverlap = false;
+
+      // Check if text fits in screen width
+      if (textRect.width > window.innerWidth) {
+        hasOverlap = true;
+      }
 
       // Check NavItem buttons
       buttons.forEach((button) => {
@@ -83,17 +88,17 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
     };
 
     // Check on mount and window resize
-    checkOverlap();
-    window.addEventListener('resize', checkOverlap);
+    checkVisibility();
+    window.addEventListener('resize', checkVisibility);
 
     // Use ResizeObserver to detect when navbar buttons change
-    const resizeObserver = new ResizeObserver(checkOverlap);
+    const resizeObserver = new ResizeObserver(checkVisibility);
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
 
     return () => {
-      window.removeEventListener('resize', checkOverlap);
+      window.removeEventListener('resize', checkVisibility);
       resizeObserver.disconnect();
     };
   }, []);
