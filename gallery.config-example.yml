@@ -192,6 +192,14 @@ sources:
 # Webapp configuration
 #
 #webapp:
+   # Navbar centered text configuration
+   #navbar:
+     #center_text:
+       #text: Gallery
+       #fontFamily: 'Arial' # or: 'Arial', 'Helvetica', 'Courier New', 'Impact', 'Verdana'
+       #fontSize: '1.3rem' # e.g. '1.5rem', '24px', '2em'
+       #fontWeight: 700 # 100-900, or: 'normal', 'bold', 'lighter', 'bolder'
+       #padding: 8
    # Disabled webapp features
    #disabled:
      #- edit
