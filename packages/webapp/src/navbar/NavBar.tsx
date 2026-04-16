@@ -13,6 +13,7 @@ import { EditNavBar } from './EditNavBar';
 import { NavItem } from './NavItem';
 import { ViewNavBar } from './ViewNavBar';
 import { SearchInput, SearchButton } from "./SearchInput";
+import { CenteredNavBarText } from './CenteredNavBarText';
 
 export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
   const viewMode = useEditModeStore(state => state.viewMode);
@@ -32,6 +33,8 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
                 <EditNavBar showDialog={showDialog}/>
               )}
             </div>
+
+            <CenteredNavBarText text="Gallery" />
 
             <div className="flex pr-2 space-x-4">
               {!disabledPages.includes('search') && <SearchInput focus={false} />}
@@ -64,6 +67,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                     <EditNavBar showDialog={showDialog}/>
                   )}
                 </div>
+                <CenteredNavBarText text="Gallery" />
                 <div className="flex pr-2 space-x-4">
                   {!disabledPages.includes('search') && (
                     <div className="overflow-hidden rounded">
