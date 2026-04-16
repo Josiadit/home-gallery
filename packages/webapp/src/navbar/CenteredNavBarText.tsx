@@ -32,12 +32,45 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
         return;
       }
 
+      // Get all buttons (NavItems) in the navbar
       const buttons = navbar.querySelectorAll('a[class*="flex gap-2 items-center"]');
 
+      // Get search input container
+      const searchContainer = navbar.querySelector('div[class*="flex gap-2 overflow-hidden border"]');
+
+      // Get search button (mobile)
+      const searchButtons = navbar.querySelectorAll('button[class*="flex items-center justify-center gap-2"]');
+
       let hasOverlap = false;
+
+      // Check NavItem buttons
       buttons.forEach((button) => {
         const buttonRect = button.getBoundingClientRect();
         // Check if text overlaps with button
+        if (!(textRect.right < buttonRect.left ||
+              textRect.left > buttonRect.right ||
+              textRect.bottom < buttonRect.top ||
+              textRect.top > buttonRect.bottom)) {
+          hasOverlap = true;
+        }
+      });
+
+      // Check search input container
+      if (searchContainer) {
+        const searchRect = searchContainer.getBoundingClientRect();
+        // Check if text overlaps with search input
+        if (!(textRect.right < searchRect.left ||
+              textRect.left > searchRect.right ||
+              textRect.bottom < searchRect.top ||
+              textRect.top > searchRect.bottom)) {
+          hasOverlap = true;
+        }
+      }
+
+      // Check search button (mobile)
+      searchButtons.forEach((button) => {
+        const buttonRect = button.getBoundingClientRect();
+        // Check if text overlaps with search button
         if (!(textRect.right < buttonRect.left ||
               textRect.left > buttonRect.right ||
               textRect.bottom < buttonRect.top ||
@@ -81,4 +114,6 @@ export const CenteredNavBarText = ({ text, className = "" }: CenteredNavBarTextP
     </div>
   );
 };
+
+
 
