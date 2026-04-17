@@ -65,7 +65,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           # Configure buildx for better arm64 performance
-          config-inline: |
+          buildkitd-config-inline: |
             [build]
             gc-policy = "max-unused-build-cache-size=7gb"
 
@@ -90,6 +90,7 @@ jobs:
           progress: plain
 
       - name: Build arm64
+        if: false
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -105,9 +106,14 @@ jobs:
       - name: Push image to Docker Hub
         run: |
           echo "Pushing image to Docker Hub..."
+          TAGS="${{ steps.prepare.outputs.tags }}"
+          TAG_ARGS=""
+          for tag in ${TAGS//,/ }; do
+            TAG_ARGS="$TAG_ARGS -t $tag"
+          done
           docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            -t ${{ steps.prepare.outputs.tags }} \
+            --platform linux/amd64 \
+            $TAG_ARGS \
             --push \
             .
           echo "Push complete!"
