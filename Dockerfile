@@ -13,11 +13,10 @@ WORKDIR /build
 RUN node scripts/disable-dependency.js api-server && \
   if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" ]]; then node scripts/disable-dependency.js --prefix=packages/extractor sharp ; fi
 
-# Use pnpm for better monorepo handling - significantly faster than npm for workspaces
-RUN npm install -g pnpm@7.14.2 && \
-  pnpm install --frozen-lockfile
+# Install dependencies with npm
+RUN npm install --no-audit --loglevel verbose
 
-RUN pnpm build
+RUN npm run build
 
 RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
   mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
