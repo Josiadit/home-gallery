@@ -11,7 +11,7 @@ WORKDIR /build
 
 # Disable dependencies BEFORE npm install to avoid compiling large native modules
 RUN node scripts/disable-dependency.js api-server && \
-  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" ]]; then node scripts/disable-dependency.js --prefix=packages/extractor sharp ; fi
+  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" || "$TARGETPLATFORM" == "linux/arm64" ]]; then node scripts/disable-dependency.js --prefix=packages/extractor sharp ; fi
 
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose

@@ -1,6 +1,6 @@
-# Credits https://blog.oddbit.com/post/2020-09-25-building-multi-architecture-im/
+# Enhanced workflow with separate arm64 handling
 ---
-name: 'build docker images'
+name: 'build docker images optimized'
 
 on:
   push:
@@ -67,7 +67,7 @@ jobs:
           # Configure buildx for better arm64 performance
           config-inline: |
             [build]
-            gc-policy = "max-unused-build-cache-size=100gb"
+            gc-policy = "max-unused-build-cache-size=7gb"
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
@@ -76,20 +76,39 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build
+      - name: Build amd64
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.prepare.outputs.tags }}
-          # Add build cache for layer reuse across builds
+          platforms: linux/amd64
+          push: false
+          outputs: type=oci,dest=/tmp/image-amd64
           cache-from: type=gha
-          cache-to: type=gha,mode=max
-          # Increase build timeout from default 5 minutes
-          build-args: |
-            BUILDKIT_STEP_LOG_MAX_SIZE=10485760
-          # Add progress output for debugging
+          cache-to: type=gha,mode=min
           progress: plain
+
+      - name: Build arm64
+        uses: docker/build-push-action@v5
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: false
+          outputs: type=oci,dest=/tmp/image-arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
+          progress: plain
+
+      - name: Push image to Docker Hub
+        run: |
+          echo "Pushing image to Docker Hub..."
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ${{ steps.prepare.outputs.tags }} \
+            --push \
+            .
+          echo "Push complete!"
+
