@@ -1,7 +1,5 @@
-# Image builder
+# Image builder - Optimized for ARM64
 FROM node:20-alpine AS builder
-ARG TARGETPLATFORM
-ARG NO_SHARP
 
 COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE /build/
 COPY e2e /build/e2e/
@@ -9,11 +7,12 @@ COPY packages /build/packages/
 COPY scripts /build/scripts/
 WORKDIR /build
 
-# Disable dependencies BEFORE npm install to avoid compiling large native modules
+# For ARM64, disable heavy ML dependencies that require native compilation
+# This is more aggressive than the default build
 RUN node scripts/disable-dependency.js api-server && \
-  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" ]]; then node scripts/disable-dependency.js --prefix=packages/extractor sharp ; fi
+  node scripts/disable-dependency.js --prefix=packages/extractor sharp
 
-# Use pnpm for better monorepo handling - significantly faster than npm for workspaces
+# Use pnpm for better monorepo handling
 RUN npm install -g pnpm@7.14.2 && \
   pnpm install --frozen-lockfile
 
@@ -54,3 +53,4 @@ ENV GALLERY_WATCH_POLL_INTERVAL=300
 EXPOSE 3000
 
 ENTRYPOINT [ "node", "/app/gallery.js" ]
+

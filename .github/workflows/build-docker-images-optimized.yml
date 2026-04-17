@@ -1,6 +1,6 @@
-# Credits https://blog.oddbit.com/post/2020-09-25-building-multi-architecture-im/
+# Enhanced workflow with separate arm64 handling
 ---
-name: 'build docker images'
+name: 'build docker images optimized'
 
 on:
   push:
@@ -76,20 +76,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build
+      - name: Build amd64
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.prepare.outputs.tags }}
-          # Add build cache for layer reuse across builds
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # Increase build timeout from default 5 minutes
-          build-args: |
-            BUILDKIT_STEP_LOG_MAX_SIZE=10485760
-          # Add progress output for debugging
           progress: plain
+
+      - name: Build arm64 (with aggressive optimization)
+        uses: docker/build-push-action@v5
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile.arm64
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          progress: plain
+          # Increase timeout for arm64 builds
+          timeout: 3600
+
