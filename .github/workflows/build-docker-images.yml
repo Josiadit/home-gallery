@@ -90,7 +90,6 @@ jobs:
           progress: plain
 
       - name: Build arm64
-        if: false
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
