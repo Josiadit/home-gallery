@@ -1,8 +1,10 @@
 import * as React from "react";
 import { useState } from "react";
 import * as icons from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from "react-router-dom";
 
 import { useEditModeStore, ViewMode } from '../store/edit-mode-store';
+import { useSearchStore } from "../store/search-store";
 import { useTagDialog } from "../dialog/use-tag-dialog";
 import { addTags } from '../api/ApiService';
 import { useDeviceType, DeviceType } from "../utils/useDeviceType";
@@ -25,9 +27,18 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
   const centerTextSize = appConfig.navbar?.center_text?.fontSize;
   const centerTextWeight = appConfig.navbar?.center_text?.fontWeight;
 
+  const navigate = useNavigate();
+  const search = useSearchStore(state => state.search);
+
+  const handleCenterTextClick = () => {
+    navigate('/')
+    search({type: 'none'});
+  }
+
   return (
     <>
-      <nav className="sticky top-0 z-10 bg-light-500">
+      <div className="h-12" />
+      <nav className="fixed top-0 z-10 bg-light-500 w-full">
         <div className="mx-auto">
           <div className="relative flex items-center justify-between h-12">
             <div className="flex px-2 space-x-2 overflow-x-visible">
@@ -39,7 +50,7 @@ export const DesktopNavBar = ({disableEdit = false, showDialog}) => {
               )}
             </div>
 
-            {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} />}
+            {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} onClick={handleCenterTextClick} />}
 
             <div className="flex pr-2 space-x-4">
               {!disabledPages.includes('search') && <SearchInput focus={false} />}
@@ -62,9 +73,18 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
   const centerTextSize = appConfig.navbar?.center_text?.fontSize;
   const centerTextWeight = appConfig.navbar?.center_text?.fontWeight;
 
+  const navigate = useNavigate();
+  const search = useSearchStore(state => state.search);
+
+  const handleCenterTextClick = () => {
+    navigate('/')
+    search({type: 'none'});
+  }
+
   return (
     <>
-      <nav className="sticky top-0 z-10 bg-light-500">
+      <div className="pt-12" />
+      <nav className="fixed top-0 z-10 bg-light-500 w-full">
         <div className="mx-auto">
           <div className="relative flex items-center justify-between h-12">
             { !showSearch && (
@@ -77,7 +97,7 @@ export const MobileNavBar = ({disableEdit = false, showDialog}) => {
                     <EditNavBar showDialog={showDialog}/>
                   )}
                 </div>
-                {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} />}
+                {centerText && <CenteredNavBarText text={centerText} padding={centerTextPadding} fontFamily={centerTextFont} fontSize={centerTextSize} fontWeight={centerTextWeight} onClick={handleCenterTextClick} />}
                 <div className="flex pr-2 space-x-4">
                   {!disabledPages.includes('search') && (
                     <div className="overflow-hidden rounded">
