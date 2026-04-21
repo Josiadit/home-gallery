@@ -111,7 +111,7 @@ jobs:
             TAG_ARGS="$TAG_ARGS -t $tag"
           done
           docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64 \
             $TAG_ARGS \
             --push \
             .
