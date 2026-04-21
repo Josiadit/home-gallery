@@ -89,7 +89,6 @@ jobs:
           cache-to: type=gha,mode=min
 
       - name: Build arm64
-        if: false
         uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -110,15 +109,15 @@ jobs:
             TAG_ARGS="$TAG_ARGS -t $tag"
           done
           docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64 \
             $TAG_ARGS \
             --push \
             .
           echo "Push complete!"
 
-#          with arm64
+#          without arm64
 #          docker buildx build \
-#            --platform linux/amd64,linux/arm64 \
+#            --platform linux/amd64 \
 #            $TAG_ARGS \
 #            --push \
 #            .
