@@ -149,7 +149,7 @@ export const createImageResizer = async (config) => {
   ].filter(item => item.active)
 
   const factoryOptions = {
-    quality: +(config?.extrator?.image?.previewQuality || 80)
+    quality: +(config?.extractor?.image?.previewQuality || 80)
   }
 
   let index = 0
