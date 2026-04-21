@@ -87,7 +87,7 @@ jobs:
           outputs: type=oci,dest=/tmp/image-amd64
           cache-from: type=gha
           cache-to: type=gha,mode=min
-          progress: plain
+
       - name: Build arm64
         if: false
         uses: docker/build-push-action@v5
@@ -100,7 +100,7 @@ jobs:
           outputs: type=oci,dest=/tmp/image-arm64
           cache-from: type=gha
           cache-to: type=gha,mode=min
-          progress: plain
+
       - name: Push image to Docker Hub
         run: |
           echo "Pushing image to Docker Hub..."
@@ -109,6 +109,13 @@ jobs:
           for tag in ${TAGS//,/ }; do
             TAG_ARGS="$TAG_ARGS -t $tag"
           done
+          docker buildx build \
+            --platform linux/amd64 \
+            $TAG_ARGS \
+            --push \
+            .
+          echo "Push complete!"
+
 #          with arm64
 #          docker buildx build \
 #            --platform linux/amd64,linux/arm64 \
@@ -116,12 +123,4 @@ jobs:
 #            --push \
 #            .
 #          echo "Push complete!"
-
-#          without arm64
-          docker buildx build \
-            --platform linux/amd64 \
-            $TAG_ARGS \
-            --push \
-            .
-          echo "Push complete!"
 
