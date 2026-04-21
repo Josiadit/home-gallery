@@ -135,7 +135,7 @@ export const CenteredNavBarText = ({ text, className = "", padding = 8, fontFami
     >
       <div
         ref={textRef}
-        className="text-light-50 font-medium text-center whitespace-nowrap"
+        className="text-light-50 font-medium text-center whitespace-nowrap select-none"
         style={{
           ...(fontFamily && { fontFamily }),
           ...(fontSize && { fontSize }),
