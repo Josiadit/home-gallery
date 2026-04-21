@@ -20,6 +20,7 @@ jobs:
         run: |
           echo "DOCKER_TOKEN is set: ${{ secrets.DOCKER_TOKEN != '' }}"
 
+
       - name: Prepare
         id: prepare
         run: |
