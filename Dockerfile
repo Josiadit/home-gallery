@@ -1,12 +1,23 @@
+FROM alpine AS structure-extractor
+WORKDIR /src
+
+# 1. Wir kopieren ALLES kurz hierher (keine Sorge, das landet nicht im End-Image)
+COPY . .
+
+# 2. Wir suchen alle package.jsons und kopieren sie mit Pfad nach /output
+RUN mkdir -p /output && \
+    find . -name "package.json" -exec cp --parents {} /output/ \; && \
+    find . -name "pnpm-lock.yaml" -exec cp --parents {} /output/ \; 2>/dev/null || true && \
+    find . -name ".npmrc" -exec cp --parents {} /output/ \; 2>/dev/null || true
+
 # Image builder
 FROM node:24-alpine AS builder
 ARG TARGETPLATFORM
 ARG NO_SHARP
 
 WORKDIR /build
-COPY package*.json .npmrc ./
-COPY packages/*/package*.json ./packages/
-COPY e2e/package*.json ./e2e/
+
+COPY --from=structure-extractor /output ./
 
 COPY scripts ./scripts/
 
@@ -25,7 +36,7 @@ RUN ls -R packages/
 
 COPY . .
 
-RUN ls -R packages/
+#RUN ls -R packages/
 
 RUN npm run build
 
