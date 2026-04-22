@@ -38,11 +38,8 @@ RUN npm install --no-audit --loglevel verbose
 
 RUN npm run build
 
-# Bundle with --no-archive to skip tar creation and copy files directly
-RUN node scripts/bundle.js --bundle-file=bundle-docker.yml --no-archive && \
-    mkdir -p /build/app && \
-    cp -r /build/dist/*/home-gallery/* /build/app/
-
+RUN node scripts/bundle.js --bundle-file=bundle-docker.yml --no-compression && \
+  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
 
 # Final image
 FROM node:24-alpine
