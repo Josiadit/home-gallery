@@ -10,6 +10,8 @@ RUN mkdir -p /output && \
     find . -name "pnpm-lock.yaml" -exec cp --parents {} /output/ \; 2>/dev/null || true && \
     find . -name ".npmrc" -exec cp --parents {} /output/ \; 2>/dev/null || true
 
+RUN ls -r /output
+
 # Image builder
 FROM node:24-alpine AS builder
 ARG TARGETPLATFORM
