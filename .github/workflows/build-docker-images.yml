@@ -84,7 +84,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=amd64
 
       - name: Build arm64
-        #if: false
+        if: false
         uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -101,9 +101,11 @@ jobs:
           context: .
           # This will pull the amd64 and arm64 layers directly from the GHA cache
           # and push them as a single multi-arch manifest to Docker Hub.
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+          #,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prepare.outputs.tags }}
           cache-from: |
             type=gha,scope=amd64
-            type=gha,scope=arm64
+
+          #type=gha,scope=arm64
