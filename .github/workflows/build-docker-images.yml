@@ -1,4 +1,4 @@
-name: 'build docker images optimized'
+name: 'build docker images'
 
 on:
   push:
