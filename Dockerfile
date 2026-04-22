@@ -10,7 +10,7 @@ RUN npm install -g pnpm
 
 # Copy dependency files FIRST for better layer caching
 # If these haven't changed, Docker can reuse the cached layer
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json ./
 
 # Copy package.json files from all workspace packages (needed for pnpm workspace resolution)
 COPY packages/*/package.json packages/*/
