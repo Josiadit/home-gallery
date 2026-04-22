@@ -30,13 +30,15 @@ RUN node scripts/disable-dependency.js api-server && \
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
 
-RUN ls -R ./
+#RUN ls -R ./
 
 #RUN ls -R ./e2e/
 #
 #RUN ls -R ./packages/
 #
-COPY . .
+COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
+COPY e2e ./e2e/
+COPY packages ./packages/
 
 #RUN ls -R packages/
 
