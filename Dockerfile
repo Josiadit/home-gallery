@@ -38,22 +38,23 @@ RUN npm install --no-audit --loglevel verbose
 
 RUN npm run build
 
-RUN mkdir -p app/node_modules/@home-gallery
+#RUN mkdir -p app/node_modules/@home-gallery
+#
+#RUN mv packages/* app/node_modules/@home-gallery/
+#
+#RUN for file in \
+#    package.json \
+#    CHANGELOG.md \
+#    README.md \
+#    LICENSE \
+#    gallery.js \
+#    gallery.config-example.yml \
+#    .build.json; \
+#    do [ -e "$file" ] && mv "$file" app/; done
+#
+#RUN rm -rf app/node_modules/@ffmpeg-installer \
 
-RUN mv packages/* app/node_modules/@home-gallery/
-
-RUN for file in \
-    package.json \
-    CHANGELOG.md \
-    README.md \
-    LICENSE \
-    gallery.js \
-    gallery.config-example.yml \
-    .build.json; \
-    do [ -e "$file" ] && mv "$file" app/; done
-
-RUN rm -rf app/node_modules/@ffmpeg-installer \
-           app/node_modules/@ffprobe-installer 2>/dev/null
+RUN node scripts/bundle-docker.js --bundle-file=bundle-docker.yml
 
 #RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
 #  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app

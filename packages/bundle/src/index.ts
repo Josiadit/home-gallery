@@ -66,6 +66,58 @@ export interface BundleOptions {
   hostArch?: string
 }
 
+export interface BundleFile {
+  absolute: string
+  relative: string
+}
+
+export interface BundleFilesResult {
+  files: BundleFile[]
+}
+
+export const getBundleFiles = async (options: BundleOptions): Promise<BundleFilesResult> => {
+  const { bundleFile } = options;
+  const host = {
+    platform: options.hostPlattform || os.platform(),
+    arch: options.hostArch || os.arch()
+  }
+  const dir = options.baseDir || process.cwd()
+  const config = options.bundleConfig || await readConfig(path.join(dir, bundleFile || 'bundle.yml'), host.platform, host.arch)
+
+  const { targets, packages, includes, excludes, map } = config;
+
+  const filteredTargets = filterTargets(targets, options.filter)
+  if (filteredTargets.length === 0) {
+    throw new Error(`No targets matched the filter ${options.filter}`)
+  }
+
+  const target = filteredTargets[0]
+  log.info(`Getting bundle files for target ${target.platform}-${target.arch}`)
+
+  const targetPackages = filterPackages(packages, target.platform, target.arch)
+  const packageResolver = new PackageReolver(dir)
+  await packageResolver.addPackages(targetPackages, dir, {platform: toPackagePlatform(target.platform), arch: target.arch})
+  const packageFilesAbsolute = await packageResolver.files
+  const packageFiles = packageFilesAbsolute.map(file => path.relative(dir, file))
+  log.info(`Require ${packageResolver.packageCount} packages with ${packageFiles.length} files for ${targetPackages.length} main packages`)
+
+  const filter = getFilter(packageFiles, includes, excludes, target.platform, target.arch)
+  const mapping = toMapping(map, target.platform, target.arch)
+
+  // Get all absolute files and apply filters
+  const files: BundleFile[] = packageFilesAbsolute
+    .filter(absolutePath => {
+      const relative = path.relative(dir, absolutePath)
+      return filter(relative)
+    })
+    .map(absolutePath => ({
+      absolute: absolutePath,
+      relative: mapping(path.relative(dir, absolutePath))
+    }))
+
+  return { files }
+}
+
 export const bundle = async (options: BundleOptions): Promise<void> => {
   const { bundleFile, version } = options;
   const host = {
