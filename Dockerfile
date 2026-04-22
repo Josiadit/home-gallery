@@ -1,14 +1,14 @@
-#FROM alpine AS structure-extractor
-#WORKDIR /src
-#
-## 1. Wir kopieren ALLES kurz hierher (keine Sorge, das landet nicht im End-Image)
-#COPY . .
-#
-## 2. Wir suchen alle package.jsons und kopieren sie mit Pfad nach /output
-#RUN mkdir -p /output && \
-#    find . -name "package.json" -exec cp --parents {} /output/ \; && \
-#    find . -name "pnpm-lock.yaml" -exec cp --parents {} /output/ \; 2>/dev/null || true && \
-#    find . -name ".npmrc" -exec cp --parents {} /output/ \; 2>/dev/null || true
+FROM alpine AS structure-extractor
+WORKDIR /src
+
+# 1. Wir kopieren ALLES kurz hierher (keine Sorge, das landet nicht im End-Image)
+COPY . .
+
+# 2. Wir suchen alle package.jsons und kopieren sie mit Pfad nach /output
+RUN mkdir -p /output && \
+    find . -name "package.json" -exec cp --parents {} /output/ \; && \
+    find . -name "pnpm-lock.yaml" -exec cp --parents {} /output/ \; 2>/dev/null || true && \
+    find . -name ".npmrc" -exec cp --parents {} /output/ \; 2>/dev/null || true
 #
 # Image builder
 FROM node:24-alpine AS builder
@@ -17,11 +17,11 @@ ARG NO_SHARP
 
 WORKDIR /build
 
-#COPY --from=structure-extractor /output ./
+COPY --from=structure-extractor /output ./
 
-COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
-COPY e2e ./e2e/
-COPY packages ./packages/
+#COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
+#COPY e2e ./e2e/
+#COPY packages ./packages/
 
 COPY scripts ./scripts/
 
@@ -34,19 +34,21 @@ RUN node scripts/disable-dependency.js api-server && \
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
 
-RUN ls -R ./
+RUN #ls -R ./
 
 #RUN ls -R ./e2e/
 #
 #RUN ls -R ./packages/
 #
-#COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
-#COPY e2e ./e2e/
-#COPY packages ./packages/
+COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
+COPY e2e ./e2e/
+COPY packages ./packages/
 
 #RUN ls -R packages/
 
-#RUN npm run build
+RUN npm install --no-audit --loglevel verbose
+
+RUN npm run build
 
 RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
   mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
