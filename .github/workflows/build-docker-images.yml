@@ -61,7 +61,7 @@ jobs:
           # Configure buildx for better arm64 performance
           buildkitd-config-inline: |
             [build]
-            gc-policy = "max-unused-build-cache-size=7gb"
+            gc-policy = "max-unused-build-cache-size=9gb"
 
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
@@ -81,7 +81,7 @@ jobs:
           load: true
           tags: amd64-temp-cache
           cache-from: type=gha,scope=amd64
-          cache-to: type=gha,mode=min,scope=amd64
+          cache-to: type=gha,mode=max,scope=amd64
 
       - name: Build arm64
         #if: false
@@ -93,7 +93,7 @@ jobs:
           platforms: linux/arm64
           push: false
           cache-from: type=gha,scope=arm64
-          cache-to: type=gha,mode=min,scope=arm64
+          cache-to: type=gha,mode=max,scope=arm64
 
       - name: Push image to Docker Hub
         uses: docker/build-push-action@v7
