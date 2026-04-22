@@ -39,7 +39,7 @@ RUN npm install --no-audit --loglevel verbose
 RUN npm run build
 
 RUN node scripts/bundle.js --bundle-file=bundle-docker.yml --no-compression && \
-  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
+  mkdir -p app && tar -xf dist/latest/home-gallery-*.tar.gz -C app
 
 # Final image
 FROM node:24-alpine
