@@ -27,13 +27,22 @@ async function build(args) {
       platform: 'node',
       target: 'es2022',
       format: 'esm',
-      outdir: 'dist',
-      watch: watch
+      outdir: 'dist'
     }
   ]
 
-  return Promise.all(targets.map(target => esbuild.build(target)))
-    .catch(cause => { throw new Error(`Build failed: ${cause}`, {cause}) })
+  if (watch) {
+    // Use context() for watch mode in esbuild >= 0.13
+    return Promise.all(targets.map(async target => {
+      const ctx = await esbuild.context(target)
+      return ctx.watch()
+    }))
+      .catch(cause => { throw new Error(`Build failed: ${cause}`, {cause}) })
+  } else {
+    // Use build() for one-off builds
+    return Promise.all(targets.map(target => esbuild.build(target)))
+      .catch(cause => { throw new Error(`Build failed: ${cause}`, {cause}) })
+  }
 }
 
 function handleError(err) {

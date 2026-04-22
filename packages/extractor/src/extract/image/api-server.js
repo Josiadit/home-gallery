@@ -1,4 +1,4 @@
-import request from 'request';
+import axios from 'axios';
 
 import Logger from '@home-gallery/logger'
 import { parallel, noop } from '@home-gallery/stream';
@@ -15,25 +15,32 @@ const DOCUMENATION_URL = 'https://docs.home-gallery.org'
 const getEntryFileBySuffixes = (storage, entry, suffixes) => suffixes.find(suffix => storage.hasFile(entry, suffix));
 
 const simpleFetch = async (options) => {
-  return new Promise((resolve, reject) => {
-    request(options, (err, res, body) => {
-      if (err) {
-        return reject(err)
-      } else if (res.statusCode < 200 || res.statusCode >= 300) {
-        const err = new Error(`Request was not successful: ${res.statusCode}`)
-        err.statusCode = res.statusCode
-        return reject(err)
-      }
-      resolve({res, body})
+  try {
+    const response = await axios({
+      url: options.url,
+      method: options.method || 'GET',
+      data: options.body,
+      headers: options.headers,
+      timeout: options.timeout,
+      responseType: 'arraybuffer',
+      validateStatus: () => true // Don't throw on any status
     })
-  })
-  .then(async ({body}) => {
-    try {
-      return JSON.parse(body)
-    } catch(err) {
-      throw new Error(`Failed to parse response body as json`, {cause: err})
+
+    if (response.status < 200 || response.status >= 300) {
+      const err = new Error(`Request was not successful: ${response.status}`)
+      err.statusCode = response.status
+      throw err
     }
-  })
+
+    // Convert buffer to string for JSON parsing
+    const body = response.data.toString('utf-8')
+    return JSON.parse(body)
+  } catch(err) {
+    if (err.message && err.message.includes('Request was not successful')) {
+      throw err
+    }
+    throw new Error(`Failed to fetch or parse response`, {cause: err})
+  }
 }
 
 /**

@@ -1,4 +1,4 @@
-import request from 'request';
+import axios from 'axios';
 
 import Logger from '@home-gallery/logger'
 import { throttleAsync } from '@home-gallery/stream';
@@ -78,38 +78,52 @@ async function geoReverse(storage, options) {
     }
 
     const t0 = Date.now();
-    request(req, (err, res, body) => {
-      if (err) {
+    // Use async IIFE to handle axios in callback-based function
+    (async () => {
+      try {
+        const response = await axios({
+          url: req.url,
+          headers: req.headers,
+          timeout: req.timeout,
+          validateStatus: () => true // Don't throw on any status
+        })
+
+        if (response.status < 100 || response.status >= 300) {
+          if (response.status === 429) {
+            log.warn(`Bandwidth limit exceeded. Stop querying geo data`);
+            isLimitExceeded = true;
+          } else {
+            const bodyStr = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
+            log.warn({req, res: response}, `Could not query geo reverse of ${entry} for ${geo} by URL ${url}: response code is ${response.status} with body ${bodyStr.replace(/\n/g, '\\n')})`);
+          }
+          return cb();
+        }
+
+        let data
+        try {
+          data = response.data
+          if (typeof data === 'string') {
+            data = JSON.parse(data)
+          }
+        } catch (err) {
+          log.warn({req, res: response}, `Could not parse request body of ${entry} for ${geo} by URL ${url}: ${err}`);
+          return cb()
+        }
+
+        storage.writeFile(entry, geoReverseSuffix, data)
+          .then(() => {
+            let info =`${data.osm_type} at ${[data.address?.city, data.address?.country].filter(v => !!v).join(', ')} (${data.address?.country_code?.toUpperCase()})`;
+            log.debug(t0, `Successful geo reverse lookup for ${entry} for ${geo}: ${info}`);
+          })
+          .catch(err => {
+            log.error(err, `Could write geo reverse of ${entry} for ${geo}: ${err}`);
+          })
+          .finally(cb)
+      } catch (err) {
         log.error(err, `Could not query geo reverse of ${entry} for ${geo} by URL ${url}: ${err}`);
         return cb();
-      } else if (res.statusCode < 100 || res.statusCode >= 300) {
-        if (res.statusCode === 429) {
-          log.warn(`Bandwidth limit exceeded. Stop querying geo data`);
-          isLimitExceeded = true;
-        } else {
-          log.warn({req, res}, `Could not query geo reverse of ${entry} for ${geo} by URL ${url}: response code is ${res.statusCode} with body ${res.body.replace(/\n/g, '\\n')})`);
-        }
-        return cb();
       }
-
-      let data
-      try {
-        data = JSON.parse(body)
-      } catch (err) {
-        log.warn({req, res}, `Could not parse request body of ${entry} for ${geo} by URL ${url}: ${err}`);
-        return cb()
-      }
-
-      storage.writeFile(entry, geoReverseSuffix, data)
-        .then(() => {
-          let info =`${data.osm_type} at ${[data.address?.city, data.address?.country].filter(v => !!v).join(', ')} (${data.address?.country_code?.toUpperCase()})`;
-          log.debug(t0, `Successful geo reverse lookup for ${entry} for ${geo}: ${info}`);
-        })
-        .catch(err => {
-          log.error(err, `Could write geo reverse of ${entry} for ${geo}: ${err}`);
-        })
-        .finally(cb)
-    })
+    })()
   }
 
   // 1req/1s should be fine. See https://operations.osmfoundation.org/policies/nominatim/

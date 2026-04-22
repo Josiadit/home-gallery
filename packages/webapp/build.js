@@ -10,8 +10,7 @@ const targets = [
     sourcemap: true,
     platform: 'browser',
     target: 'es2020',
-    outdir: 'dist',
-    watch: watch
+    outdir: 'dist'
   },
   {
     entryPoints: ['./src/remote-console.js'],
@@ -20,8 +19,7 @@ const targets = [
     sourcemap: true,
     platform: 'browser',
     target: 'es2015',
-    outdir: 'dist',
-    watch: watch
+    outdir: 'dist'
   }
 ]
 
@@ -30,4 +28,13 @@ const catchError = e => {
   process.exit(1)
 }
 
-Promise.all(targets.map(target => esbuild.build(target))).catch(catchError)
+if (watch) {
+  // Use context() for watch mode in esbuild >= 0.13
+  Promise.all(targets.map(async target => {
+    const ctx = await esbuild.context(target)
+    return ctx.watch()
+  })).catch(catchError)
+} else {
+  // Use build() for one-off builds
+  Promise.all(targets.map(target => esbuild.build(target))).catch(catchError)
+}

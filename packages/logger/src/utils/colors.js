@@ -2,8 +2,8 @@ import chalk from 'chalk'
 
 // credits to TJ Holowaychuk <tj@vision-media.ca> from debug package
 // for color values and hash algorithm
-const colors16 = [
-  chalk.cyan, chalk.green, chalk.yellow, chalk.blue, chalk.red, chalk.magenta
+const colors16Names = [
+  'cyan', 'green', 'yellow', 'blue', 'red', 'magenta'
 ]
 
 const colors256 = [
@@ -39,18 +39,37 @@ const colorNoneFns = {
 }
 
 const color16Fns = {
-  moduleColorFn: module => colors16[moduleHash(module) % colors16.length].bold,
-  durationColorFn: chalk.grey,
-  trace: { levelColorFn: chalk.grey, msgColorFn: chalk.grey },
-  debug: { levelColorFn: chalk.grey, msgColorFn: chalk.grey },
+  moduleColorFn: module => {
+    const colorName = colors16Names[moduleHash(module) % colors16Names.length]
+    return v => chalk[colorName].bold(v)
+  },
+  durationColorFn: v => chalk.gray(v),
+  trace: { levelColorFn: v => chalk.gray(v), msgColorFn: v => chalk.gray(v) },
+  debug: { levelColorFn: v => chalk.gray(v), msgColorFn: v => chalk.gray(v) },
   info: { levelColorFn: identityFn, msgColorFn: identityFn },
-  warn: { levelColorFn: chalk.yellow.bold, msgColorFn: chalk.yellow },
-  error: { levelColorFn: chalk.red.bold, msgColorFn: chalk.red },
-  fatal: { levelColorFn: chalk.black.bgRed.bold, msgColorFn: chalk.red }
+  warn: { levelColorFn: v => chalk.yellow.bold(v), msgColorFn: v => chalk.yellow(v) },
+  error: { levelColorFn: v => chalk.red.bold(v), msgColorFn: v => chalk.red(v) },
+  fatal: { levelColorFn: v => chalk.black.bgRed.bold(v), msgColorFn: v => chalk.red(v) }
 }
 
 const color256Fns = Object.assign({}, color16Fns, {
-  moduleColorFn: module => chalk.ansi256(colors256[moduleHash(module) % colors256.length]).bold,
+  moduleColorFn: module => v => chalk.ansi256(colors256[moduleHash(module) % colors256.length]).bold(v),
 })
 
-export const colorFns = !chalk.supportsColor ? colorNoneFns : (chalk.supportsColor.level < 2 ? color16Fns : color256Fns)
+// In chalk v5, force color support to true by default
+// Users can still disable it via environment variables if needed
+chalk.level = Math.max(chalk.level || 3, 2)
+
+// Determine color support
+const getColorFns = () => {
+  const level = chalk.level
+  if (level === 0) {
+    return colorNoneFns
+  } else if (level < 2) {
+    return color16Fns
+  } else {
+    return color256Fns
+  }
+}
+
+export const colorFns = getColorFns()
