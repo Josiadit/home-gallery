@@ -1,0 +1,5 @@
+# pnpm settings
+
+# Auto detection by CPU
+workspace-concurrency=0
+

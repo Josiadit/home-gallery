@@ -77,7 +77,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build amd64
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
@@ -89,7 +89,7 @@ jobs:
           cache-to: type=gha,mode=min
 
       - name: Build arm64
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .

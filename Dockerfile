@@ -1,5 +1,5 @@
 # Image builder
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 ARG TARGETPLATFORM
 ARG NO_SHARP
 
@@ -23,7 +23,7 @@ RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
 
 
 # Final image
-FROM node:20-alpine
+FROM node:24-alpine
 LABEL org.opencontainers.image.authors="github@josia.eu"
 LABEL org.opencontainers.image.url="https://home-gallery.org"
 LABEL org.opencontainers.image.documentation="https://docs.home-gallery.org"
