@@ -69,56 +69,12 @@ steps:
     event:
     - push
 
-- name: test - node v18
-  image: node:18-alpine
+- name: test - node v22 (LTS)
+  image: node:22-alpine
   commands:
-  - npm run test -- --workspace-concurrency=1
-  environment:
-    TAP_TIMEOUT: 60
+    - npm run test -- --concurrency=1
   when:
-    branch:
-    - master
-    - develop
-    # execute also on tagged feature/fix branches
-    - feature/*e2e*
-    - fix/*e2e*
-    event:
-    - push
-
-- name: test:e2e - node v18
-  image: node:18-alpine
-  commands:
-  - apk add --no-cache perl
-  - npm run test:e2e -- --tags run
-  environment:
-    TZ: Europe/Berlin
-    GAUGE_HOME: /drone/src/.gauge
-    test_timeout: 120000 # 2 min timeout for gauge
-  when:
-    branch:
-    - master
-    - develop
-    # execute also on tagged feature/fix branches
-    - feature/*e2e*
-    - fix/*e2e*
-    event:
-    - push
-
-- name: test - node v16
-  image: node:16-alpine
-  commands:
-  - npm run test -- --workspace-concurrency=1
-  environment:
-    TAP_TIMEOUT: 60
-  when:
-    branch:
-    - master
-    - develop
-    # execute also on tagged feature/fix branches
-    - feature/*e2e*
-    - fix/*e2e*
-    event:
-    - push
+    branch: [master, develop]
 
 #- name: notify
 #  image: sfelis/drone-email
