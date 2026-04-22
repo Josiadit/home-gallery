@@ -1,4 +1,4 @@
-import { createWriteStream, statSync } from 'fs'
+import { createWriteStream } from 'fs'
 import { mkdir } from 'fs/promises'
 import path from 'path'
 import { createGzip } from 'zlib'
@@ -13,7 +13,7 @@ export interface MapFunction {
 
 const log = logger('archive')
 
-export const writeArchive = async (dir: string, filter: FilterFunction, mapName: MapFunction, archivePrefix: string, outputFilename: string) => {
+export const writeArchive = async (dir: string, filter: FilterFunction, mapName: MapFunction, archivePrefix: string, outputFilename: string, compress: boolean = true) => {
   const tarStream = tar.pack(dir, {
     ignore: (name: string) => {
       const relative = path.relative(dir, name)
@@ -31,9 +31,10 @@ export const writeArchive = async (dir: string, filter: FilterFunction, mapName:
   await mkdir(path.dirname(outputFilename), {recursive: true})
 
   return new Promise((resolve, reject) => {
-    tarStream
-        .pipe(createGzip())
-        .pipe(createWriteStream(outputFilename))
+    const writeStream = createWriteStream(outputFilename)
+    const stream = compress ? tarStream.pipe(createGzip()) : tarStream
+    stream
+        .pipe(writeStream)
         .on('close', () => resolve(void 0))
         .on('error', (error: Error) => reject(error))
   })

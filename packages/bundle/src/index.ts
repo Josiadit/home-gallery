@@ -1,7 +1,5 @@
 import os from 'os'
 import path from 'path'
-import { mkdir } from 'fs/promises'
-import { copyFile } from 'fs/promises'
 
 import { logger } from './log.js'
 import { RunStep, Mapping, readConfig, Target } from './config.js'
@@ -64,7 +62,7 @@ export interface BundleOptions {
   filter?: string
   noBefore?: boolean
   noRun?: boolean
-  noArchive?: boolean
+  noCompression?: boolean
   hostPlattform?: string
   hostArch?: string
 }
@@ -117,58 +115,19 @@ export const bundle = async (options: BundleOptions): Promise<void> => {
     const filter = getFilter(packageFiles, includes, excludes, target.platform, target.arch)
     const mapping = toMapping(map, target.platform, target.arch)
 
-    if (options.noArchive) {
-      // Skip archive creation - copy filtered files directly to output directory
-      const extractDir = path.join(outputDir, archivePrefix)
-      await mkdir(extractDir, { recursive: true })
+    await writeArchive(dir, filter, mapping, archivePrefix, archiveFile, !options.noCompression)
+    await updateHash(archiveFile, hashAlgorithm, `${archiveFile}.${hashAlgorithm}sum`)
+    await updateHash(archiveFile, hashAlgorithm, hashFile)
+    await symlink(archiveFile, archiveLatestLink).catch(err => log.warn(err, `Could not create symlink from ${archiveFile} to ${archiveLatestLink}`))
+    log.info(`Created archive ${archiveFile}`)
 
-      // Get all files that match the filter and copy them with mappings applied
-      for (const file of packageFiles) {
-        if (filter(file)) {
-          const sourceFile = path.join(dir, file)
-          const mappedName = mapping(file)
-          const destFile = path.join(extractDir, mappedName)
-          await mkdir(path.dirname(destFile), { recursive: true })
-          await copyFile(sourceFile, destFile)
-          log.debug(`Copied: ${file} -> ${mappedName}`)
-        }
-      }
-
-      // Also include root-level files (package.json, gallery.js, etc.)
-      for (const includePattern of includes) {
-        if (matchPlatformArch(includePattern, target.platform, target.arch)) {
-          const pattern = includePattern.pattern
-          if (!pattern.includes('/') && !pattern.includes('*')) {
-            const sourceFile = path.join(dir, pattern)
-            const mappedName = mapping(pattern)
-            const destFile = path.join(extractDir, mappedName)
-            await mkdir(path.dirname(destFile), { recursive: true })
-            try {
-              await copyFile(sourceFile, destFile)
-              log.debug(`Copied root file: ${pattern} -> ${mappedName}`)
-            } catch (e) {
-              log.trace(`Could not copy ${pattern}: ${e}`)
-            }
-          }
-        }
-      }
-
-      log.info(`Extracted files to ${extractDir}`)
-    } else {
-      await writeArchive(dir, filter, mapping, archivePrefix, archiveFile)
-      await updateHash(archiveFile, hashAlgorithm, `${archiveFile}.${hashAlgorithm}sum`)
-      await updateHash(archiveFile, hashAlgorithm, hashFile)
-      await symlink(archiveFile, archiveLatestLink).catch(err => log.warn(err, `Could not create symlink from ${archiveFile} to ${archiveLatestLink}`))
-      log.info(`Created archive ${archiveFile}`)
-
-      if (Array.isArray(target.command)) {
-        const sanitizeVersion = `${version}${snapshot}`.replaceAll(/[^-.A-Za-z0-9]+/g, '-').replaceAll(/-+/g, '-').replace(/(^-|-$)/g, '')
-        await pack(archiveFile, archivePrefix, `${output.name}/${sanitizeVersion}`, target.platform, target.command, binFile)
-        await updateHash(binFile, hashAlgorithm, `${binFile}.${hashAlgorithm}sum`)
-        await updateHash(binFile, hashAlgorithm, hashFile)
-        await symlink(binFile, binLatestLink).catch(err => log.warn(err, `Could not create symlink from ${binFile} to ${binLatestLink}`))
-        log.info(`Created binary ${binFile}`)
-      }
+    if (Array.isArray(target.command)) {
+      const sanitizeVersion = `${version}${snapshot}`.replaceAll(/[^-.A-Za-z0-9]+/g, '-').replaceAll(/-+/g, '-').replace(/(^-|-$)/g, '')
+      await pack(archiveFile, archivePrefix, `${output.name}/${sanitizeVersion}`, target.platform, target.command, binFile)
+      await updateHash(binFile, hashAlgorithm, `${binFile}.${hashAlgorithm}sum`)
+      await updateHash(binFile, hashAlgorithm, hashFile)
+      await symlink(binFile, binLatestLink).catch(err => log.warn(err, `Could not create symlink from ${binFile} to ${binLatestLink}`))
+      log.info(`Created binary ${binFile}`)
     }
 
   }
