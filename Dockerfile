@@ -34,7 +34,7 @@ RUN node scripts/disable-dependency.js api-server && \
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
 
-#RUN ls -R ./
+RUN ls -R ./
 
 #RUN ls -R ./e2e/
 #
@@ -46,7 +46,7 @@ RUN npm install --no-audit --loglevel verbose
 
 #RUN ls -R packages/
 
-RUN npm run build
+#RUN npm run build
 
 RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
   mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
