@@ -1,6 +1,12 @@
 bundle-debug.log
 package-lock.json
+test-release.sh
+
+Dockerfile
+.dockerignore
+
 .git
+.gitignore
 .github
 **/.cache
 node_modules
@@ -8,6 +14,7 @@ node_modules
 **/dist
 **/fonts
 **/.nyc_output
+/plugins
 /build
 /data
 /dist
