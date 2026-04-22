@@ -12,38 +12,38 @@ RUN mkdir -p /output && \
 
 RUN ls -r /output
 
-# Image builder
-FROM node:24-alpine AS builder
-ARG TARGETPLATFORM
-ARG NO_SHARP
-
-WORKDIR /build
-
-COPY --from=structure-extractor /output ./
-
-COPY scripts ./scripts/
-
-# Disable dependencies BEFORE npm install to avoid compiling large native modules
-RUN node scripts/disable-dependency.js api-server && \
-  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" || "$TARGETPLATFORM" == "linux/arm64" ]]; then \
-    node scripts/disable-dependency.js --prefix=packages/extractor sharp ; \
-  fi
-
-# Install dependencies with npm
-RUN npm install --no-audit --loglevel verbose
-
-RUN ls -R e2e/
-
-RUN ls -R packages/
-
-COPY . .
-
+## Image builder
+#FROM node:24-alpine AS builder
+#ARG TARGETPLATFORM
+#ARG NO_SHARP
+#
+#WORKDIR /build
+#
+#COPY --from=structure-extractor /output ./
+#
+#COPY scripts ./scripts/
+#
+## Disable dependencies BEFORE npm install to avoid compiling large native modules
+#RUN node scripts/disable-dependency.js api-server && \
+#  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" || "$TARGETPLATFORM" == "linux/arm64" ]]; then \
+#    node scripts/disable-dependency.js --prefix=packages/extractor sharp ; \
+#  fi
+#
+## Install dependencies with npm
+#RUN npm install --no-audit --loglevel verbose
+#
+#RUN ls -R e2e/
+#
 #RUN ls -R packages/
-
-RUN npm run build
-
-RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
-  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
+#
+#COPY . .
+#
+##RUN ls -R packages/
+#
+#RUN npm run build
+#
+#RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
+#  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
 
 
 # Final image
