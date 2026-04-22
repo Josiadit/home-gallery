@@ -19,8 +19,6 @@ WORKDIR /build
 
 COPY --from=structure-extractor /output ./
 
-RUN ls -R ./
-
 COPY scripts ./scripts/
 
 # Disable dependencies BEFORE npm install to avoid compiling large native modules
@@ -30,7 +28,9 @@ RUN node scripts/disable-dependency.js api-server && \
   fi
 
 # Install dependencies with npm
-#RUN npm install --no-audit --loglevel verbose
+RUN npm install --no-audit --loglevel verbose
+
+RUN ls -R ./
 
 #RUN ls -R ./e2e/
 #
