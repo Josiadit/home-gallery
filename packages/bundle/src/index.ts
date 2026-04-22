@@ -1,5 +1,7 @@
 import os from 'os'
 import path from 'path'
+import { mkdir } from 'fs/promises'
+import { copyFile } from 'fs/promises'
 
 import { logger } from './log.js'
 import { RunStep, Mapping, readConfig, Target } from './config.js'
@@ -62,61 +64,11 @@ export interface BundleOptions {
   filter?: string
   noBefore?: boolean
   noRun?: boolean
+  noArchive?: boolean
   hostPlattform?: string
   hostArch?: string
 }
 
-export interface BundleFile {
-  absolute: string
-  relative: string
-}
-
-export interface BundleFilesResult {
-  files: BundleFile[]
-}
-
-export const getBundleFiles = async (options: BundleOptions): Promise<BundleFilesResult> => {
-  const { bundleFile } = options;
-  const host = {
-    platform: options.hostPlattform || os.platform(),
-    arch: options.hostArch || os.arch()
-  }
-  const dir = options.baseDir || process.cwd()
-  const config = options.bundleConfig || await readConfig(path.join(dir, bundleFile || 'bundle.yml'), host.platform, host.arch)
-
-  const { targets, packages, includes, excludes, map } = config;
-
-  const filteredTargets = filterTargets(targets, options.filter)
-  if (filteredTargets.length === 0) {
-    throw new Error(`No targets matched the filter ${options.filter}`)
-  }
-
-  const target = filteredTargets[0]
-  log.info(`Getting bundle files for target ${target.platform}-${target.arch}`)
-
-  const targetPackages = filterPackages(packages, target.platform, target.arch)
-  const packageResolver = new PackageReolver(dir)
-  await packageResolver.addPackages(targetPackages, dir, {platform: toPackagePlatform(target.platform), arch: target.arch})
-  const packageFilesAbsolute = await packageResolver.files
-  const packageFiles = packageFilesAbsolute.map(file => path.relative(dir, file))
-  log.info(`Require ${packageResolver.packageCount} packages with ${packageFiles.length} files for ${targetPackages.length} main packages`)
-
-  const filter = getFilter(packageFiles, includes, excludes, target.platform, target.arch)
-  const mapping = toMapping(map, target.platform, target.arch)
-
-  // Get all absolute files and apply filters
-  const files: BundleFile[] = packageFilesAbsolute
-    .filter(absolutePath => {
-      const relative = path.relative(dir, absolutePath)
-      return filter(relative)
-    })
-    .map(absolutePath => ({
-      absolute: absolutePath,
-      relative: mapping(path.relative(dir, absolutePath))
-    }))
-
-  return { files }
-}
 
 export const bundle = async (options: BundleOptions): Promise<void> => {
   const { bundleFile, version } = options;
@@ -165,19 +117,58 @@ export const bundle = async (options: BundleOptions): Promise<void> => {
     const filter = getFilter(packageFiles, includes, excludes, target.platform, target.arch)
     const mapping = toMapping(map, target.platform, target.arch)
 
-    await writeArchive(dir, filter, mapping, archivePrefix, archiveFile)
-    await updateHash(archiveFile, hashAlgorithm, `${archiveFile}.${hashAlgorithm}sum`)
-    await updateHash(archiveFile, hashAlgorithm, hashFile)
-    await symlink(archiveFile, archiveLatestLink).catch(err => log.warn(err, `Could not create symlink from ${archiveFile} to ${archiveLatestLink}`))
-    log.info(`Created archive ${archiveFile}`)
+    if (options.noArchive) {
+      // Skip archive creation - copy filtered files directly to output directory
+      const extractDir = path.join(outputDir, archivePrefix)
+      await mkdir(extractDir, { recursive: true })
 
-    if (Array.isArray(target.command)) {
-      const sanitizeVersion = `${version}${snapshot}`.replaceAll(/[^-.A-Za-z0-9]+/g, '-').replaceAll(/-+/g, '-').replace(/(^-|-$)/g, '')
-      await pack(archiveFile, archivePrefix, `${output.name}/${sanitizeVersion}`, target.platform, target.command, binFile)
-      await updateHash(binFile, hashAlgorithm, `${binFile}.${hashAlgorithm}sum`)
-      await updateHash(binFile, hashAlgorithm, hashFile)
-      await symlink(binFile, binLatestLink).catch(err => log.warn(err, `Could not create symlink from ${binFile} to ${binLatestLink}`))
-      log.info(`Created binary ${binFile}`)
+      // Get all files that match the filter and copy them with mappings applied
+      for (const file of packageFiles) {
+        if (filter(file)) {
+          const sourceFile = path.join(dir, file)
+          const mappedName = mapping(file)
+          const destFile = path.join(extractDir, mappedName)
+          await mkdir(path.dirname(destFile), { recursive: true })
+          await copyFile(sourceFile, destFile)
+          log.debug(`Copied: ${file} -> ${mappedName}`)
+        }
+      }
+
+      // Also include root-level files (package.json, gallery.js, etc.)
+      for (const includePattern of includes) {
+        if (matchPlatformArch(includePattern, target.platform, target.arch)) {
+          const pattern = includePattern.pattern
+          if (!pattern.includes('/') && !pattern.includes('*')) {
+            const sourceFile = path.join(dir, pattern)
+            const mappedName = mapping(pattern)
+            const destFile = path.join(extractDir, mappedName)
+            await mkdir(path.dirname(destFile), { recursive: true })
+            try {
+              await copyFile(sourceFile, destFile)
+              log.debug(`Copied root file: ${pattern} -> ${mappedName}`)
+            } catch (e) {
+              log.trace(`Could not copy ${pattern}: ${e}`)
+            }
+          }
+        }
+      }
+
+      log.info(`Extracted files to ${extractDir}`)
+    } else {
+      await writeArchive(dir, filter, mapping, archivePrefix, archiveFile)
+      await updateHash(archiveFile, hashAlgorithm, `${archiveFile}.${hashAlgorithm}sum`)
+      await updateHash(archiveFile, hashAlgorithm, hashFile)
+      await symlink(archiveFile, archiveLatestLink).catch(err => log.warn(err, `Could not create symlink from ${archiveFile} to ${archiveLatestLink}`))
+      log.info(`Created archive ${archiveFile}`)
+
+      if (Array.isArray(target.command)) {
+        const sanitizeVersion = `${version}${snapshot}`.replaceAll(/[^-.A-Za-z0-9]+/g, '-').replaceAll(/-+/g, '-').replace(/(^-|-$)/g, '')
+        await pack(archiveFile, archivePrefix, `${output.name}/${sanitizeVersion}`, target.platform, target.command, binFile)
+        await updateHash(binFile, hashAlgorithm, `${binFile}.${hashAlgorithm}sum`)
+        await updateHash(binFile, hashAlgorithm, hashFile)
+        await symlink(binFile, binLatestLink).catch(err => log.warn(err, `Could not create symlink from ${binFile} to ${binLatestLink}`))
+        log.info(`Created binary ${binFile}`)
+      }
     }
 
   }
