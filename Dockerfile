@@ -25,7 +25,7 @@ RUN node scripts/disable-dependency.js api-server && \
   fi
 
 # Install dependencies with pnpm (faster, more deterministic)
-RUN pnpm install --frozen-lockfile --no-audit
+RUN pnpm install --frozen-lockfile
 
 # Copy remaining source files and configuration
 COPY tsconfig.base.json bundle-docker.yml gallery.js gallery.config-example.yml README.md LICENSE ./
