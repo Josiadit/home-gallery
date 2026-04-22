@@ -1,5 +1,3 @@
-# Enhanced workflow with separate arm64 handling
----
 name: 'build docker images optimized'
 
 on:
@@ -15,10 +13,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      - name: Debug Secrets
-        run: |
-          echo "DOCKER_TOKEN is set: ${{ secrets.DOCKER_TOKEN != '' }}"
 
       - name: Prepare
         id: prepare
@@ -58,7 +52,7 @@ jobs:
         with:
           platforms: all
           # Optimize QEMU performance for ARM builds
-          image: tonistiigi/binfmt:latest
+          #image: tonistiigi/binfmt:latest
 
       - name: Set up Docker Buildx
         id: buildx
@@ -84,12 +78,13 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: false
-          outputs: type=oci,dest=/tmp/image-amd64
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          load: true
+          tags: amd64-temp-cache
+          cache-from: type=gha,scope=amd64
+          cache-to: type=gha,mode=min,scope=amd64
 
       - name: Build arm64
-        if: false
+        #if: false
         uses: docker/build-push-action@v7
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -97,30 +92,18 @@ jobs:
           file: ./Dockerfile
           platforms: linux/arm64
           push: false
-          outputs: type=oci,dest=/tmp/image-arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=arm64
+          cache-to: type=gha,mode=min,scope=arm64
 
       - name: Push image to Docker Hub
-        run: |
-          echo "Pushing image to Docker Hub..."
-          TAGS="${{ steps.prepare.outputs.tags }}"
-          TAG_ARGS=""
-          for tag in ${TAGS//,/ }; do
-            TAG_ARGS="$TAG_ARGS -t $tag"
-          done
-          docker buildx build \
-            --platform linux/amd64 \
-            $TAG_ARGS \
-            --push \
-            .
-          echo "Push complete!"
-
-#          with arm64
-#          docker buildx build \
-#            --platform linux/amd64,linux/arm64 \
-#            $TAG_ARGS \
-#            --push \
-#            .
-#          echo "Push complete!"
-
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          # This will pull the amd64 and arm64 layers directly from the GHA cache
+          # and push them as a single multi-arch manifest to Docker Hub.
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.prepare.outputs.tags }}
+          cache-from: |
+            type=gha,scope=amd64
+            type=gha,scope=arm64
