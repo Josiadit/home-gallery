@@ -19,10 +19,6 @@ WORKDIR /build
 
 COPY --from=structure-extractor /output ./
 
-#COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
-#COPY e2e ./e2e/
-#COPY packages ./packages/
-
 COPY scripts ./scripts/
 
 # Disable dependencies BEFORE npm install to avoid compiling large native modules
@@ -34,24 +30,32 @@ RUN node scripts/disable-dependency.js api-server && \
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
 
-RUN #ls -R ./
-
-#RUN ls -R ./e2e/
-#
-#RUN ls -R ./packages/
-#
 COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
 COPY e2e ./e2e/
 COPY packages ./packages/
-
-#RUN ls -R packages/
 
 RUN npm install --no-audit --loglevel verbose
 
 RUN npm run build
 
-RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
-  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
+RUN mkdir -p app/node_modules/@home-gallery
+
+RUN mv packages/* app/node_modules/@home-gallery/
+
+RUN mv package.json \
+       CHANGELOG.md \
+       README.md \
+       LICENSE \
+       gallery.js \
+       gallery.config-example.yml \
+       .build.json \
+       app/
+
+RUN rm -rf app/node_modules/@ffmpeg-installer \
+           app/node_modules/@ffprobe-installer
+
+#RUN node scripts/bundle.js --bundle-file=bundle-docker.yml && \
+#  mkdir -p app && tar -xvf dist/latest/home-gallery-*.tar.gz -C app
 
 
 # Final image
