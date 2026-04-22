@@ -6,6 +6,8 @@ ARG NO_SHARP
 WORKDIR /build
 COPY package*.json .npmrc ./
 COPY packages/*/package*.json ./packages/
+COPY e2e/package*.json ./e2e/
+
 COPY scripts ./scripts/
 
 # Disable dependencies BEFORE npm install to avoid compiling large native modules
