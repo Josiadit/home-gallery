@@ -19,11 +19,11 @@ RUN node scripts/disable-dependency.js api-server && \
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
 
-RUN ls -R packages/logger
+RUN ls -R packages/
 
 COPY . .
 
-RUN ls -R packages/logger
+RUN ls -R packages/
 
 RUN npm run build
 
