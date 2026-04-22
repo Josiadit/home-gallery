@@ -3,18 +3,23 @@ FROM node:24-alpine AS builder
 ARG TARGETPLATFORM
 ARG NO_SHARP
 
-COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE /build/
-COPY e2e /build/e2e/
-COPY packages /build/packages/
-COPY scripts /build/scripts/
 WORKDIR /build
+COPY package*.json .npmrc ./
+COPY packages/*/package*.json ./packages/
+COPY scripts ./scripts/
 
 # Disable dependencies BEFORE npm install to avoid compiling large native modules
 RUN node scripts/disable-dependency.js api-server && \
-  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" || "$TARGETPLATFORM" == "linux/arm64" ]]; then node scripts/disable-dependency.js --prefix=packages/extractor sharp ; fi
+  if [[ -n "$NO_SHARP" || "$TARGETPLATFORM" == "linux/arm/v6" || "$TARGETPLATFORM" == "linux/arm/v7" || "$TARGETPLATFORM" == "linux/arm64" ]]; then \
+    node scripts/disable-dependency.js --prefix=packages/extractor sharp ; \
+  fi \
 
 # Install dependencies with npm
 RUN npm install --no-audit --loglevel verbose
+
+COPY .npmrc *.json *.yaml *.js *.md *.yml LICENSE ./
+COPY e2e ./e2e/
+COPY packages ./packages/
 
 RUN npm run build
 
